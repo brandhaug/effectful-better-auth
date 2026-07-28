@@ -1,12 +1,18 @@
 # effectful-better-auth
 
+[![npm](https://img.shields.io/npm/v/effectful-better-auth)](https://www.npmjs.com/package/effectful-better-auth)
+[![license](https://img.shields.io/npm/l/effectful-better-auth)](./LICENSE)
+
 [Effect](https://effect.website) v4 integration for [Better Auth](https://better-auth.com). ESM-only, zero runtime dependencies; `effect` and `better-auth` are peers.
+
+## Installation
 
 ```sh
 bun add effectful-better-auth
+# or: npm install / pnpm add / yarn add
 ```
 
-> Not yet published to npm — the first release is planned for when Effect v4 reaches stable. Until then, consume it via a `file:`/`link:` dependency on this repo.
+Requires `better-auth ^1.6.0` and `effect ^4.0.0-beta.93` as peer dependencies.
 
 ## Quickstart
 
@@ -188,3 +194,15 @@ export const PlatformLive = Layer.mergeAll(
 ```
 
 See [SPEC.md](./SPEC.md) for the full design.
+
+## Contributing
+
+Issues and pull requests are welcome at [brandhaug/effectful-better-auth](https://github.com/brandhaug/effectful-better-auth). Run the checks locally before submitting:
+
+```bash
+bun run typecheck && bun run test
+```
+
+## License
+
+[MIT](./LICENSE)
