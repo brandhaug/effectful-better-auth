@@ -7,7 +7,7 @@ import { memoryAdapter } from 'better-auth/adapters/memory'
 import { admin } from 'better-auth/plugins/admin'
 import { username } from 'better-auth/plugins/username'
 import { Context, Effect, Layer } from 'effect'
-import { BetterAuthApiError, service, type ServiceResult } from '../src/index.js'
+import { BetterAuthApiError, service, type ServiceResult, type Session } from '../src/index.js'
 
 const secret = 'type-assertions-secret-32-characters'
 
@@ -93,3 +93,14 @@ const _provided: Layer.Layer<
 
 export const _exports = { t1, t3, t4, t5, _t1ErrorCovers, _t1ErrorExact, _t5Null, _builtRequiresDep, _provided }
 export type { T5Success }
+
+// T6 (regression): `Session<O>` must carry plugin schema fields. The admin
+// plugin widens `user` with `role`; `$Infer.Session` does NOT see this —
+// only the getSession endpoint's return type does, which is why Session<O>
+// derives from the endpoint (see src/types.ts).
+type AuthOptions = typeof Auth extends ServiceResult<infer O, infer _E, infer _R> ? O : never
+type AuthSession = Session<AuthOptions>
+const _t6RoleExists: AuthSession['user'] extends { role?: string | null | undefined }
+  ? true
+  : never = true
+const _t6SessionToken: AuthSession['session'] extends { token: string } ? true : never = true
