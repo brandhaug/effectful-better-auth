@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "outDir": "./.probe-out"
+  },
+  "include": ["fixture.ts", "../../src"]
+}
