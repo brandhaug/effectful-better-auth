@@ -1,9 +1,22 @@
 {
   "name": "effectful-better-auth",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "effect",
+    "better-auth",
+    "authentication",
+    "auth",
+    "typescript",
+    "session"
+  ],
+  "homepage": "https://github.com/brandhaug/effectful-better-auth#readme",
+  "bugs": {
+    "url": "https://github.com/brandhaug/effectful-better-auth/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brandhaug/effectful-better-auth.git"
@@ -20,7 +33,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run typecheck && bun run test && bun run build"
   },
   "peerDependencies": {
     "better-auth": "^1.6.0",
