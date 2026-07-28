@@ -1,6 +1,6 @@
 {
   "name": "effectful-better-auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
   "license": "MIT",
   "type": "module",
