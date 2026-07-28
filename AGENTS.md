@@ -1,4 +1,4 @@
-# better-auth-effect
+# effectful-better-auth
 
 Effect v4 integration for Better Auth. See [README.md](./README.md) for the design roadmap: service/Layer factory, typed `auth.api.*` wrappers with tagged errors, runtime-agnostic handler mount, and `CurrentSession` HttpApi middleware.
 
@@ -6,7 +6,7 @@ Effect v4 integration for Better Auth. See [README.md](./README.md) for the desi
 
 ### Issue tracker
 
-Issues live in this repo's GitHub Issues (`brandhaug/better-auth-effect`), managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues live in this repo's GitHub Issues (`brandhaug/effectful-better-auth`), managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
