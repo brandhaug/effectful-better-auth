@@ -1,4 +1,5 @@
 export { BetterAuthApiError } from './errors.js'
 export { effectApi, type EffectApi } from './effect-api.js'
 export { make, service } from './factory.js'
+export { route, toHttpEffect } from './mount.js'
 export type { Api, Instance, Service, ServiceResult, Tag } from './types.js'
