@@ -58,6 +58,25 @@ The proxy is the one invocation idiom. For raw `Response`/headers (`asResponse`,
 
 `service(id, options)` and `make(options)` also accept an effectful options builder (`Effect<Options, E, R>`); its requirements flow into the layer, so you can read your own config and construct your database adapter from your own services. The library reads no environment and defines no Config keys.
 
+When options are built in a function (including an effectful builder), wrap the plugin array with the `plugins(...)` helper — a bare array literal widens to a union array there, which silently drops plugin schema inference (plugin-added user/session fields like the admin plugin's `user.role` vanish from `Session`):
+
+```ts
+import { plugins, service } from 'effectful-better-auth'
+
+const build = Effect.gen(function* () {
+  const config = yield* MyConfig
+  return {
+    secret: config.secret,
+    baseURL: config.baseURL,
+    emailAndPassword: { enabled: true },
+    database: myAdapter(config),
+    plugins: plugins(username(), admin({ adminRoles: ['admin'] }))
+  }
+})
+
+export const Auth = service('app/Auth', build)
+```
+
 ## Mounting the auth routes
 
 `route(Tag)` is a Layer that registers `'*' <basePath>/*` on the v4 router, forwarding everything under the base path to Better Auth's own handler. The base path derives from your better-auth options (`options.basePath ?? '/api/auth'`); `route(Tag, { basePath })` is the single override point. No `node:` imports anywhere — the mount runs on Cloudflare Workers unchanged.
