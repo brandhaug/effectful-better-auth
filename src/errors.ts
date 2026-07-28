@@ -18,3 +18,14 @@ export class BetterAuthApiError extends Schema.TaggedErrorClass<BetterAuthApiErr
   message: Schema.String,
   headers: HeadersInitSchema
 }) {}
+
+/**
+ * Failure of the required session middleware when `getSession` resolves
+ * `null` (SPEC §5). Better Auth does not throw for missing sessions; the
+ * middleware owns this error. Rendered as 401 on HttpApi contracts.
+ */
+export class Unauthorized extends Schema.TaggedErrorClass<Unauthorized>('Unauthorized')(
+  'Unauthorized',
+  {},
+  { httpApiStatus: 401 }
+) {}
