@@ -6,6 +6,8 @@
 bun add effectful-better-auth
 ```
 
+> Not yet published to npm — the first release is planned for when Effect v4 reaches stable. Until then, consume it via a `file:`/`link:` dependency on this repo.
+
 ## Quickstart
 
 ```ts
