@@ -10,7 +10,7 @@ const HeadersInitSchema = Schema.declare(
  * Discriminate on `statusCode` or `code` — never on `message`, which is
  * human-readable text and may be localized.
  */
-export class BetterAuthApiError extends Schema.TaggedErrorClass<BetterAuthApiError>(
+export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
   'BetterAuthApiError'
 )('BetterAuthApiError', {
   statusCode: Schema.Number,
@@ -24,7 +24,7 @@ export class BetterAuthApiError extends Schema.TaggedErrorClass<BetterAuthApiErr
  * `null` (SPEC §5). Better Auth does not throw for missing sessions; the
  * middleware owns this error. Rendered as 401 on HttpApi contracts.
  */
-export class Unauthorized extends Schema.TaggedErrorClass<Unauthorized>('Unauthorized')(
+export class Unauthorized extends Schema.TaggedError<Unauthorized>('Unauthorized')(
   'Unauthorized',
   {},
   { httpApiStatus: 401 }
