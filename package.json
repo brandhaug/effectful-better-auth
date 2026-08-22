@@ -58,5 +58,8 @@
     "effect": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
+  },
+  "overrides": {
+    "nanoid@<3.3.18": "3.3.18"
   }
 }
