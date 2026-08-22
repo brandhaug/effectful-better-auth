@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth'
 import { memoryAdapter } from 'better-auth/adapters/memory'
 import { username } from 'better-auth/plugins/username'
 import { Cause, Effect, Exit, Option } from 'effect'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { BetterAuthApiError, effectApi } from '../src/index.js'
 
 const makeAuth = () =>

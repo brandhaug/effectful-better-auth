@@ -1,7 +1,7 @@
 import { memoryAdapter } from 'better-auth/adapters/memory'
 import { Effect, Layer } from 'effect'
 import { HttpEffect, HttpRouter } from 'effect/unstable/http'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { effectApi, make, route, service, toHttpEffect } from '../src/index.js'
 
 const freshDb = () => ({ user: [], session: [], account: [], verification: [] })

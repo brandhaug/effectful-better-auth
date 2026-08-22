@@ -37,7 +37,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "bun test",
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "bun run typecheck && bun run test && bun run build"
   },
@@ -45,19 +45,18 @@
     "@types/node": "24",
     "better-auth": "1.7.1",
     "effect": "4.0.0-rc.110",
-    "typescript": "7.0.2",
-    "vitest": "4.1.11"
+    "typescript": "7.0.2"
   },
   "peerDependencies": {
     "better-auth": "^1.6.0",
     "effect": "^4.0.0-rc.110"
   },
   "devDependencies": {
+    "@types/bun": "1.4.0",
     "@types/node": "catalog:",
     "better-auth": "catalog:",
     "effect": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   },
   "overrides": {
     "nanoid@<3.3.18": "3.3.18"
