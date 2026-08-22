@@ -1,5 +1,5 @@
 import { Effect, Exit } from 'effect'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { BetterAuthApiError } from '../src/index.js'
 
 describe('BetterAuthApiError', () => {

@@ -5,7 +5,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": ["node"],
+    "types": ["bun"],
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "exactOptionalPropertyTypes": true,
