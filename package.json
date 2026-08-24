@@ -44,12 +44,12 @@
   "catalog": {
     "@types/node": "24",
     "better-auth": "1.7.1",
-    "effect": "4.0.0-rc.110",
+    "effect": "4.0.0-rc.111",
     "typescript": "7.0.2"
   },
   "peerDependencies": {
     "better-auth": "^1.6.0",
-    "effect": "^4.0.0-rc.110"
+    "effect": "^4.0.0-rc.111"
   },
   "devDependencies": {
     "@types/bun": "1.4.0",
