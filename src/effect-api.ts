@@ -25,7 +25,7 @@ type RelaxHeaders<C> =
  */
 export type EffectApi<Api> = {
   readonly [
-    K in keyof Api as Api[K] extends (...args: never[]) => Promise<unknown>
+    K in keyof Api as Api[K] extends (...args: never[]) => Promise<infer _R>
       ? K
       : never
   ]: Api[K] extends (...args: infer P) => Promise<infer R>
@@ -46,51 +46,75 @@ const injectAmbientHeaders = (
   headers: Headers
 ): ReadonlyArray<unknown> => {
   const [input] = args
-  if (input === undefined || input === null)
+  if (input === undefined || input === null) {
     return [{ headers }, ...args.slice(1)]
-  if (typeof input !== 'object') return [...args]
-  if ((input as { headers?: unknown }).headers !== undefined) return [...args]
+  }
+  if (typeof input !== 'object' || 'headers' in input) return args
   return [{ ...input, headers }, ...args.slice(1)]
 }
 
 /**
+ * Adapts a single `auth.api` endpoint into a lazy Effect (SPEC §3):
+ * `isAPIError` throws become typed `BetterAuthApiError` failures; anything
+ * else is a bug or misconfiguration and dies. When `CurrentHeaders` is in
+ * context and the call omits `headers`, the ambient headers are injected.
+ * A non-function member resolves to `undefined`, matching the mapped
+ * `EffectApi` surface which drops non-function members.
+ */
+const toEffect = (
+  endpoint: unknown
+):
+  | ((...args: unknown[]) => Effect.Effect<unknown, BetterAuthApiError>)
+  | undefined => {
+  if (typeof endpoint !== 'function') return
+  return (...args: unknown[]) =>
+    Effect.flatMap(Effect.serviceOption(CurrentHeaders), (ambient) =>
+      Effect.tryPromise({
+        try: () => {
+          const callArgs = Option.match(ambient, {
+            onNone: () => args,
+            onSome: (headers) => injectAmbientHeaders(args, headers)
+          })
+          return endpoint(...callArgs)
+        },
+        // Identity mapper: `tryPromise` would otherwise wrap the throw as a
+        // `Cause.UnknownError`; keeping the raw value lets `isAPIError` below
+        // discriminate on the original object.
+        catch: (error) => error
+      })
+    ).pipe(
+      Effect.catch((error) => {
+        if (isAPIError(error)) {
+          return Effect.fail(
+            new BetterAuthApiError({
+              statusCode: error.statusCode,
+              code: error.body?.code,
+              message: error.message,
+              headers: error.headers,
+              cause: error
+            })
+          )
+        }
+        return Effect.die(error)
+      })
+    )
+}
+
+/**
  * Wraps `auth.api` in a runtime `Proxy` so plugin endpoints get effectful
- * support with zero per-plugin code. `isAPIError` throws become typed
- * failures; anything else is a bug or misconfiguration and dies.
- *
- * When `CurrentHeaders` is provided in the effect's context, calls whose
- * options omit `headers` get them injected automatically.
+ * support with zero per-plugin code. The proxy dispatches string function
+ * members to `toEffect`; anything else resolves to `undefined`.
  */
 export const effectApi = <Api extends Record<string, unknown>>(
   api: Api
 ): EffectApi<Api> =>
-  new Proxy({} as Record<string, unknown>, {
-    get: (_target, prop) => {
-      if (typeof prop !== 'string') return undefined
-      return (...args: unknown[]) =>
-        Effect.flatMap(Effect.serviceOption(CurrentHeaders), (ambient) =>
-          Effect.tryPromise({
-            try: () =>
-              (api[prop] as (...a: unknown[]) => Promise<unknown>)(
-                ...(Option.isSome(ambient)
-                  ? injectAmbientHeaders(args, ambient.value)
-                  : args)
-              ),
-            catch: (cause) => cause
-          })
-        ).pipe(
-          Effect.catch((cause: unknown) =>
-            isAPIError(cause)
-              ? Effect.fail(
-                  new BetterAuthApiError({
-                    statusCode: cause.statusCode,
-                    code: cause.body?.code,
-                    message: cause.message,
-                    headers: cause.headers
-                  })
-                )
-              : Effect.die(cause)
-          )
-        )
+  // SAFETY: a runtime Proxy over a third-party object cannot be proven to BE its mapped
+  // type — `satisfies` has no answer for a value manufactured at runtime. The proxy is
+  // the library's only such boundary, so the cast lives here, once.
+  // oxlint-disable-next-line effect/noAs, effect/noKnownValueWidening, typescript/no-unsafe-type-assertion -- the proxy's mapped EffectApi surface is only expressible as a cast
+  new Proxy(api, {
+    get: (target, prop) => {
+      if (typeof prop !== 'string') return
+      return toEffect(target[prop])
     }
   }) as EffectApi<Api>

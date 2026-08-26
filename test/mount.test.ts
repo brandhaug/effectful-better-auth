@@ -11,7 +11,7 @@ const secret = 'test-secret-at-least-32-characters-long'
 const baseOptions = () => ({
   secret,
   baseURL: 'http://localhost:3000',
-  emailAndPassword: { enabled: true as const },
+  emailAndPassword: { enabled: true },
   database: memoryAdapter(freshDb())
 })
 
@@ -55,7 +55,7 @@ describe('toHttpEffect', () => {
       })
     )
     expect(session.status).toBe(200)
-    const body = (await session.json()) as { user: { email: string } }
+    const body: { user: { email: string } } = await session.json()
     expect(body.user.email).toBe('mount@example.com')
   })
 

@@ -9,6 +9,10 @@ const HeadersInitSchema = Schema.declare(
  *
  * Discriminate on `statusCode` or `code` — never on `message`, which is
  * human-readable text and may be localized.
+ *
+ * `cause` preserves the original better-auth `APIError` so its full payload
+ * survives the tagged conversion; it is optional so hand-built instances
+ * (tests, mocks) need not fabricate one.
  */
 export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
   'BetterAuthApiError'
@@ -16,7 +20,8 @@ export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
   statusCode: Schema.Number,
   code: Schema.UndefinedOr(Schema.String),
   message: Schema.String,
-  headers: HeadersInitSchema
+  headers: HeadersInitSchema,
+  cause: Schema.optional(Schema.Defect())
 }) {}
 
 /**

@@ -37,6 +37,8 @@
   ],
   "scripts": {
     "prepare": "husky",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "format": "prettier --write .",
@@ -68,8 +70,12 @@
     "effect": "catalog:",
     "husky": "catalog:",
     "lint-staged": "catalog:",
+    "oxlint": "1.79.0",
+    "oxlint-plugin-effect": "0.11.0",
+    "oxlint-tsgolint": "7.0.2001",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "ultracite": "7.10.6"
   },
   "overrides": {
     "nanoid@<3.3.18": "3.3.18"

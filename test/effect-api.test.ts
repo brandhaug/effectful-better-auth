@@ -57,7 +57,7 @@ describe('effectApi', () => {
           )
         )
     )
-    expect(result?.user.email).toBe('demo@example.com')
+    expect(result.user.email).toBe('demo@example.com')
   })
 
   it('fails with BetterAuthApiError carrying statusCode and code', async () => {
@@ -74,6 +74,7 @@ describe('effectApi', () => {
       expect(error).toBeInstanceOf(BetterAuthApiError)
       expect(error.statusCode).toBe(401)
       expect(error.code).toBe('INVALID_EMAIL_OR_PASSWORD')
+      expect(error.cause).toBeInstanceOf(Error)
     }
   })
 

@@ -8,7 +8,7 @@ import { admin } from 'better-auth/plugins/admin'
 import { username } from 'better-auth/plugins/username'
 import { Context, Effect, Layer } from 'effect'
 import {
-  BetterAuthApiError,
+  type BetterAuthApiError,
   plugins,
   service,
   type ServiceResult,
@@ -35,10 +35,9 @@ const t1 = Effect.gen(function* () {
 // T2: error channel is exactly BetterAuthApiError (mutual extends).
 type T1Error =
   typeof t1 extends Effect.Effect<infer _A, infer E, infer _R> ? E : never
-const _t1ErrorCovers: [T1Error] extends [BetterAuthApiError] ? true : never =
+const t1ErrorCovers: [T1Error] extends [BetterAuthApiError] ? true : never =
   true
-const _t1ErrorExact: [BetterAuthApiError] extends [T1Error] ? true : never =
-  true
+const t1ErrorExact: [BetterAuthApiError] extends [T1Error] ? true : never = true
 
 // T3: username-plugin endpoint present, body typed; misspelled key rejected.
 const t3 = Effect.gen(function* () {
@@ -67,10 +66,11 @@ const t4 = Effect.gen(function* () {
 const t5 = Effect.gen(function* () {
   const auth = yield* Auth.Tag
   const session = yield* auth.api.getSession({ headers: new Headers() })
-  return session === null ? 'anonymous' : session.user.id
+  if (session === null) return 'anonymous'
+  return session.user.id
 })
 type T5Success = Effect.Success<typeof t5>
-const _t5Null: null extends Effect.Success<
+const t5Null: null extends Effect.Success<
   ReturnType<Context.Service.Shape<typeof Auth.Tag>['api']['getSession']>
 >
   ? true
@@ -85,34 +85,23 @@ const Built = service(
     return {
       secret: dep.appSecret,
       baseURL: 'http://localhost:3000',
-      emailAndPassword: { enabled: true as const },
+      emailAndPassword: { enabled: true },
       database: memoryAdapter({})
     }
   })
 )
 type BuiltR =
   typeof Built extends ServiceResult<infer _O, infer _E, infer R> ? R : never
-const _builtRequiresDep: [{ readonly appSecret: string }] extends [BuiltR]
+const builtRequiresDep: [{ readonly appSecret: string }] extends [BuiltR]
   ? true
   : never = true
 // Providing the dependency erases R.
-const _provided: Layer.Layer<
+const provided: Layer.Layer<
   Context.Service.Shape<typeof Built.Tag>,
   never,
   never
 > = Built.layer.pipe(Layer.provide(Layer.succeed(Dep)({ appSecret: secret })))
 
-export const _exports = {
-  t1,
-  t3,
-  t4,
-  t5,
-  _t1ErrorCovers,
-  _t1ErrorExact,
-  _t5Null,
-  _builtRequiresDep,
-  _provided
-}
 export type { T5Success }
 
 // T7 (regression): `Session<O>` must carry plugin schema fields. The admin
@@ -123,9 +112,9 @@ export type { T5Success }
 type AuthOptions =
   typeof Auth extends ServiceResult<infer O, infer _E, infer _R> ? O : never
 type AuthSession = Session<AuthOptions>
-const _t7RoleExists: 'role' extends keyof AuthSession['user'] ? true : never =
+const t7RoleExists: 'role' extends keyof AuthSession['user'] ? true : never =
   true
-const _t7SessionToken: AuthSession['session'] extends { token: string }
+const t7SessionToken: AuthSession['session'] extends { token: string }
   ? true
   : never = true
 
@@ -140,5 +129,20 @@ const makeOptionsInFn = () => ({
   plugins: plugins(username(), admin({ adminRoles: ['admin'] }))
 })
 type FnSession = Session<ReturnType<typeof makeOptionsInFn>>
-const _t8RoleSurvivesFn: 'role' extends keyof FnSession['user'] ? true : never =
+const t8RoleSurvivesFn: 'role' extends keyof FnSession['user'] ? true : never =
   true
+
+export const typeAssertions = {
+  t1,
+  t3,
+  t4,
+  t5,
+  t1ErrorCovers,
+  t1ErrorExact,
+  t5Null,
+  builtRequiresDep,
+  provided,
+  t7RoleExists,
+  t7SessionToken,
+  t8RoleSurvivesFn
+}

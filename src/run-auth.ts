@@ -1,6 +1,6 @@
-import type { BetterAuthOptions } from 'better-auth'
+import { type BetterAuthOptions } from 'better-auth'
 import { Effect, type ManagedRuntime } from 'effect'
-import type { Api, Service, Tag } from './types.js'
+import { type Api, type Service, type Tag } from './types.js'
 
 /**
  * Standalone convenience for server-side `auth.api.*` calls made outside the
