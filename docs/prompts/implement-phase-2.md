@@ -22,7 +22,7 @@ Implement **phase 2** of `effectful-better-auth` — the runtime-agnostic handle
   - `route(Tag, options?)` — a Layer registering `HttpRouter.add('*', '<basePath>/*', ...)` on the v4 singleton router. `basePath` defaults from the instance's better-auth options (`options.basePath ?? '/api/auth'`); an explicit `options.basePath` on `route` overrides. No other configuration surface — middleware, rate limiting, and logging are the consumer's composition, not ours.
 - `src/middleware.ts` (SPEC §5):
   - A middleware factory minting the two variants from a `Tag<O>`, both `$Infer`-typed (add a named `Session<O>` helper type to `src/types.ts` derived from `Instance<O>['$Infer']['Session']`):
-    - **Required**: provides the session; fails a new exported `Unauthorized` tagged error (`Schema.TaggedErrorClass`) when `getSession` resolves `null`.
+    - **Required**: provides the session; fails a new exported `Unauthorized` tagged error (`Schema.TaggedError`) when `getSession` resolves `null`.
     - **Optional**: provides `Option<Session<O>>`; never fails on a missing session.
   - Built on v4 `HttpApiMiddleware.Service` (a v4 middleware *wraps the endpoint's response effect* — see the survey). The factory-minted-class shape is the riskiest typing in this phase: consumers must be able to declare the middleware on their `HttpApi` contract and get the session via a context tag in handlers. **Validate this shape against the real `effect/unstable/httpapi` types before building the whole module** — if the class-generic combination fights you, a small throwaway probe first (prototype-branch style) is cheaper than a rewrite.
   - Constructor options `{ disableCookieCache?: boolean, disableRefresh?: boolean }`, defaulting off, passed through to `getSession`'s query. Session read failures (`BetterAuthApiError`) pass through untouched. No redirects — transport-typed errors only.
@@ -49,7 +49,7 @@ Implement **phase 2** of `effectful-better-auth` — the runtime-agnostic handle
 - v4's `HttpRouter` is the layer-registering router (v3's `HttpLayerRouter`): `HttpRouter.add(...)` returns a Layer; `HttpRouter.toWebHandler(layer)` returns `{ handler, dispose }`. Request-scoped services go through `HttpRouter.provideRequest`, not `Layer.provide`.
 - `HttpApiMiddleware.Service` replaced `.Tag`; the middleware function wraps the endpoint response effect rather than v3's provide-only shape.
 - On Workers, `HttpServerRequest.toWeb` returns the original web `Request` unchanged — don't copy headers/body manually like the dead community package did.
-- `Effect.catch` (not `catchAll`), curried `Layer.effect(Tag)(...)`, `Context.Service<Shape>(id)` vs two-stage class form, `Schema.TaggedErrorClass<Self>(tag)(tag, fields)` — all as in phase 1's source.
+- `Effect.catch` (not `catchAll`), curried `Layer.effect(Tag)(...)`, `Context.Service<Shape>(id)` vs two-stage class form, `Schema.TaggedError<Self>()(tag, fields)` — all as in phase 1's source.
 
 ## Definition of done
 

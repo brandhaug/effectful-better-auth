@@ -10,7 +10,7 @@ Implement **phase 1** of `effectful-better-auth` — the plugin-aware service/La
 
 1. `SPEC.md` — the contract. Every design decision is settled there; do not relitigate any of them. If you hit a genuine contradiction or gap, stop and ask rather than improvising.
 2. The validated prototype — the typing patterns you will productionize:
-   - `git show origin/prototype/typing-strategy:prototype-typing/src/prototype.ts` (patterns A/B, negative assertions, TaggedErrorClass usage)
+   - `git show origin/prototype/typing-strategy:prototype-typing/src/prototype.ts` (patterns A/B, negative assertions, TaggedError usage)
    - `git show origin/prototype/typing-strategy:prototype-typing/src/proxy.ts` (the `EffectApi` mapped type, runtime `Proxy`, defect split, `wrap` service shape)
 3. Research findings (each on its own branch, not master):
    - `git show origin/research/better-auth-api-surface:docs/research/better-auth-api-surface.md` — `auth.api` call convention, `APIError` field semantics, `isAPIError`
@@ -21,7 +21,7 @@ Implement **phase 1** of `effectful-better-auth` — the plugin-aware service/La
 
 - `package.json` — name `effectful-better-auth`, ESM-only (`"type": "module"`, `exports` map with `types`), MIT license, `peerDependencies`: `effect` (v4 beta range) and `better-auth` (`^1.6.0`). Zero `dependencies`. Bun is the package manager.
 - `src/` modules (suggested split — adjust if a cleaner shape emerges, but keep the public surface exactly as SPEC.md defines):
-  - `errors.ts` — `BetterAuthApiError` via `Schema.TaggedErrorClass`, fields per SPEC §3 (`statusCode: number`, `code: string | undefined`, `message: string`, `headers`).
+     - `errors.ts` — `BetterAuthApiError` via `Schema.TaggedError`, fields per SPEC §3 (`statusCode: number`, `code: string | undefined`, `message: string`, `headers`).
   - `effect-api.ts` — `EffectApi<Api>` mapped type + `effectApi(api)` runtime `Proxy`. `isAPIError` → `Effect.fail(BetterAuthApiError)`, anything else → `Effect.die`.
   - `factory.ts` — `make(options)` primitive and `service(id, options)` returning `{ Tag, layer }` with service shape `{ api, instance }`. Both accept a plain options object **or** an effectful options builder `Effect<O, E, R>` whose requirements flow into the layer's `R` (SPEC §6).
   - `types.ts` — the mandatory named helper types (`Instance<O>`, `Api<O>`, `Service<O>`, …) so consumer re-exports don't inline half a megabyte of declarations (SPEC §2).
@@ -44,7 +44,7 @@ Implement **phase 1** of `effectful-better-auth` — the plugin-aware service/La
 
 - `Effect.catchAll` is `Effect.catch` in v4; `Layer.effect(Tag)(effect)` and `Layer.sync(Tag)(fn)` are curried; function-style keys are `Context.Service<Shape>(id)`, class-style is the two-stage `Context.Service<Self, Shape>()(id)`.
 - `Effect.Success<T>` (not `Effect.Effect.Success<T>`).
-- `Schema.TaggedErrorClass<Self>(tag)(tag, fields)` is the double-call form.
+- `Schema.TaggedError<Self>()(tag, fields)` is the double-call form.
 - The proxy's mapped type collapses `asResponse`/`returnHeaders` generics to the data branch — that's accepted by SPEC §3, don't fight it.
 - Better Auth's `APIError.status` can be a text key or number; `statusCode` is always numeric — map from `statusCode`.
 
