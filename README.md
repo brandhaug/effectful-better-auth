@@ -60,6 +60,22 @@ firstAdmins.pipe(
 
 The proxy is the one invocation idiom. For raw `Response`/headers (`asResponse`, `returnHeaders`) or `auth.handler`, use the raw instance: `auth.instance.api.getSession({ headers, asResponse: true })`.
 
+## Ambient request headers
+
+Inside a web-request context you don't have to thread `headers` into every call. Provide `CurrentHeaders` once and any `auth.api.*` call whose options omit `headers` picks them up automatically; explicit per-call headers still win, and when the service is absent the calls pass through untouched.
+
+```ts
+import { Effect } from 'effect'
+import { CurrentHeaders } from 'effectful-better-auth'
+
+const session = Effect.gen(function* () {
+  const auth = yield* Auth.Tag
+  return yield* auth.api.getSession({}) // headers injected from context
+}).pipe(Effect.provideService(CurrentHeaders, new Headers(request.headers)))
+```
+
+Endpoint types reflect this: `headers` is optional on the effectful api, so `getSession({ query })` — or even `getSession()` — compiles.
+
 ## Options as an Effect
 
 `service(id, options)` and `make(options)` also accept an effectful options builder (`Effect<Options, E, R>`); its requirements flow into the layer, so you can read your own config and construct your database adapter from your own services. The library reads no environment and defines no Config keys.

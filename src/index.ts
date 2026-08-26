@@ -1,4 +1,5 @@
 export { BetterAuthApiError, Unauthorized } from './errors.js'
+export { CurrentHeaders } from './current-headers.js'
 export { effectApi, type EffectApi } from './effect-api.js'
 export { make, service } from './factory.js'
 export { plugins } from './plugins.js'
