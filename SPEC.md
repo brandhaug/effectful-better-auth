@@ -21,7 +21,7 @@ The core problem: `betterAuth(options)` infers its type from the literal options
 
 - **Effectful `api` proxy (replaces the earlier `call` combinator):** every `auth.api.*` endpoint is an Effect directly — `yield* auth.api.listUsers({ query: { limit: 10 } })` fails with `BetterAuthApiError`. Implemented as a runtime `Proxy` plus a mapped type (`EffectApi<Api>`) over the plugin-inferred endpoint record, so plugins get typed support with zero per-plugin code. Validated on the prototype branch (`src/proxy.ts`).
 - **Escape hatch:** the raw instance at `service.instance`. The mapped type collapses the generic `asResponse`/`returnHeaders` flags to the data branch (verified by probe); consumers needing the raw `Response` or headers call `instance.api.*` directly. One idiom, one trapdoor — no third invocation style.
-- **Single tagged error:** `BetterAuthApiError` (`Schema.TaggedErrorClass`) carrying `statusCode: number`, `code: string | undefined` (from `body.code`, matching `$ERROR_CODES`), `message: string`, and `headers`. Discriminate on `statusCode`/`code` — never on `message` (human text, localizable).
+- **Single tagged error:** `BetterAuthApiError` (`Schema.TaggedError`) carrying `statusCode: number`, `code: string | undefined` (from `body.code`, matching `$ERROR_CODES`), `message: string`, and `headers`. Discriminate on `statusCode`/`code` — never on `message` (human text, localizable).
 - **Defect policy:** `isAPIError(err)` → typed failure; any other throw is a bug or misconfiguration and dies (`Effect.die`, via v4 `Effect.catch`). No status-class subclassing.
 
 ## 4. Module 3 — Handler mount ([#3](https://github.com/brandhaug/effectful-better-auth/issues/3), [#9](https://github.com/brandhaug/effectful-better-auth/issues/9))
