@@ -37,6 +37,12 @@ export const toHttpEffect = <O extends BetterAuthOptions>(
  * options (`options.basePath ?? '/api/auth'`); an explicit override here is
  * the single override point. Middleware, rate limiting, and logging are the
  * consumer's composition — no hooks on the mount.
+ *
+ * The mount orDies `toHttpEffect`'s `RequestError`: a mounted route has no
+ * error channel to answer it (the router serializes route failures), and a
+ * request that fails web conversion is a defect, not a recoverable failure.
+ * `toHttpEffect` keeps the typed error channel so standalone
+ * `HttpEffect.toWebHandler` consumers can decide the policy themselves.
  */
 export const route = <O extends BetterAuthOptions>(
   tag: Tag<O>,
