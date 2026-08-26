@@ -21,7 +21,9 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # A PAT is not subject to the "Allow GitHub Actions to create and
+          # approve pull requests" restriction that blocks GITHUB_TOKEN here.
+          token: ${{ secrets.CI_PAT }}
 
   publish:
     needs: release-please
