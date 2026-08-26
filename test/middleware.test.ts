@@ -58,9 +58,10 @@ const makeApp = async (id: string, spy?: { throwOnGetSession?: boolean }) => {
       return instance.api.getSession(input)
     }
   }
-  // The spied api is a test double over the raw endpoint map: overriding one member with
-  // a plain function cannot reproduce the mapped `Api` type member-for-member, so the
-  // double asserts itself back onto the library's surface exactly once, here.
+  // SAFETY: the spied api is a test double over the raw endpoint map — overriding one
+  // member with a plain function cannot reproduce the mapped `Api` type
+  // member-for-member, so the double asserts itself back onto the library's surface
+  // exactly once, here.
   const authLayer = Layer.succeed(Auth.Tag)({
     // oxlint-disable-next-line effect/noAs, typescript/no-unsafe-type-assertion -- test double over the raw api endpoint map
     api: effectApi(spiedApi) as Api<typeof options>,

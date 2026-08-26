@@ -132,15 +132,18 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
   const SessionOptionTag: SessionOptionKey<O> = Context.Service<
     Option.Option<Session<O>>
   >(`${id}/SessionOption`)
-  // `HttpApiMiddleware.Service` infers `provides: never` from the middleware function
-  // shape, not from the `~effect/httpapi/HttpApiMiddleware` metadata that carries the
-  // real `provides`/`error` contract. The declared keys below are that metadata made
-  // explicit for `HttpApi` contracts; bridging the two is the factory's boundary.
+  // SAFETY: `HttpApiMiddleware.Service` infers `provides: never` from the middleware
+  // function shape, not from the `~effect/httpapi/HttpApiMiddleware` metadata that
+  // carries the real `provides`/`error` contract. The declared keys below are that
+  // metadata made explicit for `HttpApi` contracts; bridging the two is the factory's
+  // boundary.
   // oxlint-disable-next-line effect/noAs, effect/noChainedTypeAssertions, typescript/no-unsafe-type-assertion -- HttpApiMiddleware.Service cannot see the declared middleware metadata
   const CurrentSession = HttpApiMiddleware.Service<CurrentSessionId<O>>()(
     `${id}/CurrentSession`,
     { error: [Unauthorized, BetterAuthApiError] }
   ) as unknown as CurrentSessionKey<O>
+  // SAFETY: same bridge as the required variant — `HttpApiMiddleware.Service` cannot
+  // see the declared metadata, so the optional key re-states it.
   // oxlint-disable-next-line effect/noAs, effect/noChainedTypeAssertions, typescript/no-unsafe-type-assertion -- HttpApiMiddleware.Service cannot see the declared middleware metadata
   const CurrentSessionOption = HttpApiMiddleware.Service<CurrentSessionOptionId<O>>()(
     `${id}/CurrentSessionOption`,
@@ -155,9 +158,9 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
   const readSession = (auth: Service<O>) =>
     Effect.gen(function* () {
       const request = yield* HttpServerRequest.HttpServerRequest
-      // `EffectApi<Instance<O>['api']>` cannot resolve members while `O` is generic (see
-      // the GetSession note above), so the factory reads the endpoint through this shape.
-      // The value still goes through the effectful proxy — failures follow SPEC §3.
+      // SAFETY: `EffectApi<Instance<O>['api']>` cannot resolve members while `O` is generic
+      // (see the GetSession note above), so the factory reads the endpoint through this
+      // shape. The value still goes through the effectful proxy — failures follow SPEC §3.
       // oxlint-disable-next-line effect/noAs, typescript/no-unsafe-type-assertion -- generic O defeats EffectApi member resolution; read through the GetSession shape
       return yield* (auth.api as { getSession: GetSession<O> }).getSession({
         headers: new Headers(request.headers),

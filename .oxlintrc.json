@@ -7,7 +7,14 @@
     "promise"
   ],
   "jsPlugins": [
-    "oxlint-plugin-effect/plugin"
+    "oxlint-plugin-effect/plugin",
+    {
+      // ultracite bundles the anti-slop plugin (upstream is copy-the-source, not
+      // published to npm). plugin.mjs is not in ultracite's exports map, so the
+      // specifier has to be a path.
+      "name": "anti-slop",
+      "specifier": "./node_modules/ultracite/config/oxlint/anti-slop/plugin.mjs"
+    }
   ],
   "options": {
     // A disable directive that suppresses nothing is a lie about the code it sits on.
@@ -383,7 +390,22 @@
     "effect/preferMatchTagsExhaustive": "error",
     "effect/preferPredicateIsTagged": "error",
     "effect/preferServiceOf": "error",
-    "effect/requireNamedEffectFn": "error"
+    "effect/requireNamedEffectFn": "error",
+
+    // The rest of the upstream anti-slop set. `oxlint-plugin-effect` already re-exports
+    // ten of the fifteen rules under `effect/no*` names (see the note at the top of the
+    // effect block), so those stay there and report once. These four are the ones the
+    // effect plugin does not bundle, loaded from ultracite's vendored copy.
+    "anti-slop/no-reflect-apply": "error",
+    "anti-slop/no-reflect-get": "error",
+    // no-unknown-returns fires only on *explicit* `unknown` return contracts; the
+    // proxy's `get` handler returns a function type and `ReadonlyArray<unknown>`, which
+    // are not `unknown` itself, so it stays clean.
+    "anti-slop/no-unknown-returns": "error",
+    // With `effect/noAs` as the default stance, this rule is the last-resort guard: a
+    // cast that survives code review must state its invariant in a `SAFETY:` comment
+    // immediately before the assertion.
+    "anti-slop/require-safety-comment-for-type-assertion": "error"
   },
   "overrides": [
     {
