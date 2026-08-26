@@ -12,7 +12,7 @@ bun add effectful-better-auth
 # or: npm install / pnpm add / yarn add
 ```
 
-Requires `better-auth ^1.6.0` and `effect ^4.0.0-beta.93` as peer dependencies.
+Requires `better-auth ^1.6.0` and `effect ^4.0.0-rc.111` as peer dependencies.
 
 ## Quickstart
 
@@ -42,6 +42,10 @@ export const firstAdmins = Effect.gen(function* () {
 export const main = firstAdmins.pipe(Effect.provide(Auth.layer))
 ```
 
+`service` (and `make`) infer the instance type from your literal options, so plugin endpoints (`auth.api.listUsers`, …) are fully typed with zero per-plugin code — and absent when the plugin is not in `plugins`. The proxy is the one invocation idiom; for raw `Response`/headers (`asResponse`, `returnHeaders`) or `auth.handler`, use the raw instance: `auth.instance.api.getSession({ headers, asResponse: true })`.
+
+## Errors
+
 Failures carry `statusCode`, `code` (matching `$ERROR_CODES`), `message`, and `headers` — discriminate on `statusCode`/`code`, never `message`:
 
 ```ts
@@ -52,17 +56,9 @@ firstAdmins.pipe(
 )
 ```
 
-## How plugins work
-
-`service` (and `make`) infer the instance type from your literal options, so plugin endpoints (`auth.api.listUsers`, `auth.api.signInUsername`, …) are fully typed with zero per-plugin code — and absent when the plugin is not in `plugins`.
-
-## Escape hatch
-
-The proxy is the one invocation idiom. For raw `Response`/headers (`asResponse`, `returnHeaders`) or `auth.handler`, use the raw instance: `auth.instance.api.getSession({ headers, asResponse: true })`.
-
 ## Ambient request headers
 
-Inside a web-request context you don't have to thread `headers` into every call. Provide `CurrentHeaders` once and any `auth.api.*` call whose options omit `headers` picks them up automatically; explicit per-call headers still win, and when the service is absent the calls pass through untouched.
+In a web-request context you don't have to thread `headers` into every call: provide `CurrentHeaders` once and any `auth.api.*` call whose options omit `headers` picks them up automatically. Explicit per-call headers still win; when the service is absent the calls pass through untouched. `headers` is optional on the effectful api, so `getSession({ query })` — or even `getSession()` — compiles.
 
 ```ts
 import { Effect } from 'effect'
@@ -74,13 +70,26 @@ const session = Effect.gen(function* () {
 }).pipe(Effect.provideService(CurrentHeaders, new Headers(request.headers)))
 ```
 
-Endpoint types reflect this: `headers` is optional on the effectful api, so `getSession({ query })` — or even `getSession()` — compiles.
+## Server-side calls
+
+For `auth.api.*` calls outside the Effect world (server functions, loaders, jobs), `runAuth` collapses the `runtime.runPromise(Effect.flatMap(Tag, …))` boilerplate into a single await. It resolves with the value `build` returns; failures reject with the underlying `BetterAuthApiError` unwrapped, so callers discriminate on `statusCode`/`code` directly. `headers` is forwarded into `build` (Better Auth reads cookies from there).
+
+```ts
+import { runAuth } from 'effectful-better-auth'
+
+const session = await runAuth({
+  tag: Auth.Tag,
+  runtime, // ManagedRuntime.make(Auth.layer)
+  headers: new Headers({ cookie }),
+  build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
+})
+```
 
 ## Options as an Effect
 
-`service(id, options)` and `make(options)` also accept an effectful options builder (`Effect<Options, E, R>`); its requirements flow into the layer, so you can read your own config and construct your database adapter from your own services. The library reads no environment and defines no Config keys.
+`service(id, options)` and `make(options)` also accept an effectful options builder (`Effect<Options, E, R>`); its requirements flow into the layer, so you can read your own config and build your database adapter from your own services. The library reads no environment and defines no Config keys.
 
-When options are built in a function (including an effectful builder), wrap the plugin array with the `plugins(...)` helper — a bare array literal widens to a union array there, which silently drops plugin schema inference (plugin-added user/session fields like the admin plugin's `user.role` vanish from `Session`):
+When options are built in a function (including an effectful builder), wrap the plugin array with the `plugins(...)` helper — a bare array literal widens to a union array there, which silently drops plugin schema inference (plugin-added fields like the admin plugin's `user.role` vanish from `Session`):
 
 ```ts
 import { plugins, service } from 'effectful-better-auth'
