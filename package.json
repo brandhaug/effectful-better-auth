@@ -36,6 +36,8 @@
     "dist"
   ],
   "scripts": {
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "build": "tsc -p tsconfig.build.json",
@@ -56,6 +58,9 @@
     "@types/node": "catalog:",
     "better-auth": "catalog:",
     "effect": "catalog:",
+    "oxlint": "1.79.0",
+    "oxlint-plugin-effect": "0.11.0",
+    "oxlint-tsgolint": "7.0.2001",
     "typescript": "catalog:"
   },
   "overrides": {
