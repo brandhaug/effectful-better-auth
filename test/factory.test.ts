@@ -42,9 +42,14 @@ describe('service', () => {
           username: 'demo'
         }
       })
-      return { email: signedUp.user.email, hasHandler: typeof auth.instance.handler }
+      return {
+        email: signedUp.user.email,
+        hasHandler: typeof auth.instance.handler
+      }
     })
-    const result = await Effect.runPromise(program.pipe(Effect.provide(Auth.layer)))
+    const result = await Effect.runPromise(
+      program.pipe(Effect.provide(Auth.layer))
+    )
     expect(result.email).toBe('demo@example.com')
     expect(result.hasHandler).toBe('function')
   })
@@ -62,7 +67,9 @@ describe('service', () => {
         body: { email: 'nobody@example.com', password: 'wrong-password' }
       })
     })
-    const exit = await Effect.runPromiseExit(program.pipe(Effect.provide(Auth.layer)))
+    const exit = await Effect.runPromiseExit(
+      program.pipe(Effect.provide(Auth.layer))
+    )
     expect(Exit.isFailure(exit)).toBe(true)
     if (Exit.isFailure(exit)) {
       const error = Option.getOrThrow(Cause.findErrorOption(exit.cause))
@@ -72,7 +79,9 @@ describe('service', () => {
   })
 
   it('accepts an effectful options builder whose requirements flow into the layer', async () => {
-    const AppSecret = Context.Service<{ readonly value: string }>('test/AppSecret')
+    const AppSecret = Context.Service<{ readonly value: string }>(
+      'test/AppSecret'
+    )
     const Auth = service(
       'test/AuthBuilt',
       Effect.gen(function* () {
@@ -89,7 +98,11 @@ describe('service', () => {
     const program = Effect.gen(function* () {
       const auth = yield* Auth.Tag
       const signedUp = yield* auth.api.signUpEmail({
-        body: { name: 'Demo', email: 'built@example.com', password: 'password123' }
+        body: {
+          name: 'Demo',
+          email: 'built@example.com',
+          password: 'password123'
+        }
       })
       return signedUp.user.email
     })

@@ -6,7 +6,12 @@
 import { memoryAdapter } from 'better-auth/adapters/memory'
 import { admin } from 'better-auth/plugins/admin'
 import { username } from 'better-auth/plugins/username'
-import { route, service, sessionMiddleware, toHttpEffect } from '../../src/index.js'
+import {
+  route,
+  service,
+  sessionMiddleware,
+  toHttpEffect
+} from '../../src/index.js'
 
 export const Auth = service('probe/Auth', {
   secret: 'declaration-probe-secret-32-chars!!',

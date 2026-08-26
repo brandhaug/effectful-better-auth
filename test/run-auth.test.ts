@@ -73,7 +73,8 @@ describe('runAuth', () => {
       tag: Auth.Tag,
       runtime,
       headers: new Headers({ cookie }),
-      build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
+      build: (api, headers) =>
+        api.getSession({ headers: headers ?? new Headers() })
     })
     expect(session?.user.email).toBe('demo@example.com')
   })
@@ -82,7 +83,8 @@ describe('runAuth', () => {
     const session = await runAuth({
       tag: Auth.Tag,
       runtime,
-      build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
+      build: (api, headers) =>
+        api.getSession({ headers: headers ?? new Headers() })
     })
     expect(session).toBeNull()
   })

@@ -10,7 +10,12 @@ const makeAuth = () =>
     secret: 'test-secret-at-least-32-characters-long',
     baseURL: 'http://localhost:3000',
     emailAndPassword: { enabled: true },
-    database: memoryAdapter({ user: [], session: [], account: [], verification: [] }),
+    database: memoryAdapter({
+      user: [],
+      session: [],
+      account: [],
+      verification: []
+    }),
     plugins: [username()]
   })
 

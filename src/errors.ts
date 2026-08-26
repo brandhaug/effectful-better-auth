@@ -24,8 +24,6 @@ export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
  * `null` (SPEC §5). Better Auth does not throw for missing sessions; the
  * middleware owns this error. Rendered as 401 on HttpApi contracts.
  */
-export class Unauthorized extends Schema.TaggedError<Unauthorized>('Unauthorized')(
-  'Unauthorized',
-  {},
-  { httpApiStatus: 401 }
-) {}
+export class Unauthorized extends Schema.TaggedError<Unauthorized>(
+  'Unauthorized'
+)('Unauthorized', {}, { httpApiStatus: 401 }) {}

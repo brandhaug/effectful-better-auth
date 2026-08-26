@@ -9,7 +9,12 @@ const makeAuth = () =>
     secret: 'test-secret-at-least-32-characters-long',
     baseURL: 'http://localhost:3000',
     emailAndPassword: { enabled: true },
-    database: memoryAdapter({ user: [], session: [], account: [], verification: [] })
+    database: memoryAdapter({
+      user: [],
+      session: [],
+      account: [],
+      verification: []
+    })
   })
 
 const makeRecording = () => {
@@ -28,7 +33,9 @@ describe('CurrentHeaders', () => {
     const { api, calls } = makeRecording()
     const ambient = new Headers({ 'x-ambient': 'yes' })
     await Effect.runPromise(
-      api.probe({ query: { limit: 1 } }).pipe(Effect.provideService(CurrentHeaders, ambient))
+      api
+        .probe({ query: { limit: 1 } })
+        .pipe(Effect.provideService(CurrentHeaders, ambient))
     )
     expect(calls).toHaveLength(1)
     const input = calls[0] as { query?: unknown; headers?: Headers }
@@ -39,10 +46,19 @@ describe('CurrentHeaders', () => {
   it('injects ambient headers into a call made with no arguments', async () => {
     const { api, calls } = makeRecording()
     await Effect.runPromise(
-      api.probe().pipe(Effect.provideService(CurrentHeaders, new Headers({ 'x-ambient': 'yes' })))
+      api
+        .probe()
+        .pipe(
+          Effect.provideService(
+            CurrentHeaders,
+            new Headers({ 'x-ambient': 'yes' })
+          )
+        )
     )
     expect(calls).toHaveLength(1)
-    expect((calls[0] as { headers?: Headers }).headers?.get('x-ambient')).toBe('yes')
+    expect((calls[0] as { headers?: Headers }).headers?.get('x-ambient')).toBe(
+      'yes'
+    )
   })
 
   it('explicit per-call headers win over ambient', async () => {
@@ -56,7 +72,9 @@ describe('CurrentHeaders', () => {
       )
     )
     expect(calls[0]).toMatchObject({ headers: explicit })
-    expect((calls[0] as { headers: Headers }).headers.get('x-ambient')).toBe('explicit')
+    expect((calls[0] as { headers: Headers }).headers.get('x-ambient')).toBe(
+      'explicit'
+    )
   })
 
   it('is a no-op when CurrentHeaders is not in context', async () => {

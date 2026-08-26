@@ -27,7 +27,9 @@ export const toHttpEffect = <O extends BetterAuthOptions>(
     const auth = yield* tag
     const request = yield* HttpServerRequest.HttpServerRequest
     const webRequest = yield* HttpServerRequest.toWeb(request)
-    const response = yield* Effect.promise(() => auth.instance.handler(webRequest))
+    const response = yield* Effect.promise(() =>
+      auth.instance.handler(webRequest)
+    )
     return HttpServerResponse.fromWeb(response)
   })
 

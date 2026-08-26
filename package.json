@@ -36,15 +36,25 @@
     "dist"
   ],
   "scripts": {
+    "prepare": "husky",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint-staged": "lint-staged",
     "build": "tsc -p tsconfig.build.json",
     "prepublishOnly": "bun run typecheck && bun run test && bun run build"
+  },
+  "lint-staged": {
+    "*.{ts,js,json,yml,yaml}": "prettier --write"
   },
   "catalog": {
     "@types/node": "24",
     "better-auth": "1.7.1",
     "effect": "4.0.0-rc.111",
+    "husky": "9.1.7",
+    "lint-staged": "17.3.0",
+    "prettier": "3.9.6",
     "typescript": "7.0.2"
   },
   "peerDependencies": {
@@ -56,6 +66,9 @@
     "@types/node": "catalog:",
     "better-auth": "catalog:",
     "effect": "catalog:",
+    "husky": "catalog:",
+    "lint-staged": "catalog:",
+    "prettier": "catalog:",
     "typescript": "catalog:"
   },
   "overrides": {

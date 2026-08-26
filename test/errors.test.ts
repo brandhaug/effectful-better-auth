@@ -39,7 +39,9 @@ describe('BetterAuthApiError', () => {
     expect(Exit.isFailure(exit)).toBe(true)
     const recovered = Effect.runSync(
       Effect.fail(err).pipe(
-        Effect.catchTag('BetterAuthApiError', (e) => Effect.succeed(e.statusCode))
+        Effect.catchTag('BetterAuthApiError', (e) =>
+          Effect.succeed(e.statusCode)
+        )
       )
     )
     expect(recovered).toBe(404)

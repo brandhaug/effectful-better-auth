@@ -25,10 +25,15 @@ export function make<const O extends BetterAuthOptions>(
 export function make<O extends BetterAuthOptions, E, R>(
   options: O | Effect.Effect<O, E, R>
 ): Effect.Effect<Instance<O>, E, R> {
-  return Effect.map(resolveOptions(options), (o) => betterAuth(o) as Instance<O>)
+  return Effect.map(
+    resolveOptions(options),
+    (o) => betterAuth(o) as Instance<O>
+  )
 }
 
-const toService = <O extends BetterAuthOptions>(instance: Instance<O>): Service<O> => ({
+const toService = <O extends BetterAuthOptions>(
+  instance: Instance<O>
+): Service<O> => ({
   api: effectApi(instance.api),
   instance
 })
@@ -51,6 +56,8 @@ export function service<O extends BetterAuthOptions, E, R>(
   options: O | Effect.Effect<O, E, R>
 ): ServiceResult<O, E, R> {
   const TagKey: Tag<O> = Context.Service<Service<O>>(id)
-  const layer = Layer.effect(TagKey)(Effect.map(make(resolveOptions(options)), toService))
+  const layer = Layer.effect(TagKey)(
+    Effect.map(make(resolveOptions(options)), toService)
+  )
   return { Tag: TagKey, layer }
 }

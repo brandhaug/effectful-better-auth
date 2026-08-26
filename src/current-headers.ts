@@ -6,6 +6,5 @@ import { Context } from 'effect'
  * up automatically. Explicit per-call headers still win; when absent the
  * calls pass through untouched.
  */
-export const CurrentHeaders: Context.Service<Headers, Headers> = Context.Service<Headers>(
-  '~effectful-better-auth/CurrentHeaders'
-)
+export const CurrentHeaders: Context.Service<Headers, Headers> =
+  Context.Service<Headers>('~effectful-better-auth/CurrentHeaders')

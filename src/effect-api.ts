@@ -8,11 +8,12 @@ import { BetterAuthApiError } from './errors.js'
  * omit it and rely on ambient `CurrentHeaders` injection (or genuinely need
  * none). Every other property — and explicit per-call headers — is unchanged.
  */
-type RelaxHeaders<C> = C extends Record<string, unknown>
-  ? C extends { headers: infer H }
-    ? Omit<C, 'headers'> & { headers?: H | undefined }
+type RelaxHeaders<C> =
+  C extends Record<string, unknown>
+    ? C extends { headers: infer H }
+      ? Omit<C, 'headers'> & { headers?: H | undefined }
+      : C
     : C
-  : C
 
 /**
  * Maps every promise-returning endpoint of `auth.api` to an Effect failing
@@ -23,10 +24,14 @@ type RelaxHeaders<C> = C extends Record<string, unknown>
  * consumers needing the raw `Response` or headers.
  */
 export type EffectApi<Api> = {
-  readonly [K in keyof Api as Api[K] extends (...args: never[]) => Promise<unknown>
-    ? K
-    : never]: Api[K] extends (...args: infer P) => Promise<infer R>
-    ? (...args: { readonly [I in keyof P]: RelaxHeaders<P[I]> }) => Effect.Effect<R, BetterAuthApiError>
+  readonly [
+    K in keyof Api as Api[K] extends (...args: never[]) => Promise<unknown>
+      ? K
+      : never
+  ]: Api[K] extends (...args: infer P) => Promise<infer R>
+    ? (
+        ...args: { readonly [I in keyof P]: RelaxHeaders<P[I]> }
+      ) => Effect.Effect<R, BetterAuthApiError>
     : never
 }
 
@@ -41,7 +46,8 @@ const injectAmbientHeaders = (
   headers: Headers
 ): ReadonlyArray<unknown> => {
   const [input] = args
-  if (input === undefined || input === null) return [{ headers }, ...args.slice(1)]
+  if (input === undefined || input === null)
+    return [{ headers }, ...args.slice(1)]
   if (typeof input !== 'object') return [...args]
   if ((input as { headers?: unknown }).headers !== undefined) return [...args]
   return [{ ...input, headers }, ...args.slice(1)]
@@ -66,7 +72,9 @@ export const effectApi = <Api extends Record<string, unknown>>(
           Effect.tryPromise({
             try: () =>
               (api[prop] as (...a: unknown[]) => Promise<unknown>)(
-                ...(Option.isSome(ambient) ? injectAmbientHeaders(args, ambient.value) : args)
+                ...(Option.isSome(ambient)
+                  ? injectAmbientHeaders(args, ambient.value)
+                  : args)
               ),
             catch: (cause) => cause
           })

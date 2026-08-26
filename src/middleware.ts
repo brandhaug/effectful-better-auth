@@ -6,13 +6,19 @@ import { BetterAuthApiError, Unauthorized } from './errors.js'
 import type { Service, Session, Tag } from './types.js'
 
 /** Error contract of the required variant: absent session, or transport failure. */
-export type CurrentSessionErrors = readonly [typeof Unauthorized, typeof BetterAuthApiError]
+export type CurrentSessionErrors = readonly [
+  typeof Unauthorized,
+  typeof BetterAuthApiError
+]
 
 /** Error contract of the optional variant: transport failures only. */
 export type CurrentSessionOptionErrors = typeof BetterAuthApiError
 
 /** The context key handlers yield to read the session under the required variant. */
-export type SessionKey<O extends BetterAuthOptions> = Context.Service<Session<O>, Session<O>>
+export type SessionKey<O extends BetterAuthOptions> = Context.Service<
+  Session<O>,
+  Session<O>
+>
 
 /** The context key handlers yield under the optional variant. */
 export type SessionOptionKey<O extends BetterAuthOptions> = Context.Service<
@@ -38,8 +44,8 @@ export type CurrentSessionOptionFn<O extends BetterAuthOptions> =
  * class-declared form would carry; it is what lets `HttpApi` contracts
  * accept a factory-minted key in `.middleware(...)`.
  */
-export interface CurrentSessionId<O extends BetterAuthOptions>
-  extends Context.ServiceClass.Shape<string, CurrentSessionFn<O>> {
+export interface CurrentSessionId<O extends BetterAuthOptions> extends Context
+  .ServiceClass.Shape<string, CurrentSessionFn<O>> {
   readonly '~effect/httpapi/HttpApiMiddleware': {
     readonly provides: Session<O>
     readonly requires: never
@@ -50,8 +56,9 @@ export interface CurrentSessionId<O extends BetterAuthOptions>
 }
 
 /** The identifier of the optional middleware service. */
-export interface CurrentSessionOptionId<O extends BetterAuthOptions>
-  extends Context.ServiceClass.Shape<string, CurrentSessionOptionFn<O>> {
+export interface CurrentSessionOptionId<
+  O extends BetterAuthOptions
+> extends Context.ServiceClass.Shape<string, CurrentSessionOptionFn<O>> {
   readonly '~effect/httpapi/HttpApiMiddleware': {
     readonly provides: Option.Option<Session<O>>
     readonly requires: never
@@ -62,18 +69,19 @@ export interface CurrentSessionOptionId<O extends BetterAuthOptions>
 }
 
 /** The middleware key of the required variant, as declared on `HttpApi` contracts. */
-export type CurrentSessionKey<O extends BetterAuthOptions> = HttpApiMiddleware.ServiceClass<
-  CurrentSessionId<O>,
-  string,
-  {
-    requires: never
-    provides: Session<O>
-    error: CurrentSessionErrors
-    clientError: never
-    requiredForClient: false
-    security: never
-  }
->
+export type CurrentSessionKey<O extends BetterAuthOptions> =
+  HttpApiMiddleware.ServiceClass<
+    CurrentSessionId<O>,
+    string,
+    {
+      requires: never
+      provides: Session<O>
+      error: CurrentSessionErrors
+      clientError: never
+      requiredForClient: false
+      security: never
+    }
+  >
 
 /** The middleware key of the optional variant. */
 export type CurrentSessionOptionKey<O extends BetterAuthOptions> =
@@ -102,7 +110,11 @@ export interface SessionMiddleware<O extends BetterAuthOptions> {
   readonly CurrentSessionOption: CurrentSessionOptionKey<O>
   readonly Session: SessionKey<O>
   readonly SessionOption: SessionOptionKey<O>
-  readonly layer: Layer.Layer<CurrentSessionId<O> | CurrentSessionOptionId<O>, never, Service<O>>
+  readonly layer: Layer.Layer<
+    CurrentSessionId<O> | CurrentSessionOptionId<O>,
+    never,
+    Service<O>
+  >
 }
 
 /**
@@ -136,10 +148,11 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
     `${id}/CurrentSession`,
     { error: [Unauthorized, BetterAuthApiError] }
   ) as unknown as CurrentSessionKey<O>
-  const CurrentSessionOption = HttpApiMiddleware.Service<CurrentSessionOptionId<O>>()(
-    `${id}/CurrentSessionOption`,
-    { error: BetterAuthApiError }
-  ) as unknown as CurrentSessionOptionKey<O>
+  const CurrentSessionOption = HttpApiMiddleware.Service<
+    CurrentSessionOptionId<O>
+  >()(`${id}/CurrentSessionOption`, {
+    error: BetterAuthApiError
+  }) as unknown as CurrentSessionOptionKey<O>
 
   const query = {
     disableCookieCache: options?.disableCookieCache ?? false,
