@@ -1,24 +1,31 @@
 # effectful-better-auth
 
-Effect v4 integration for Better Auth. See [README.md](./README.md) for the design roadmap: service/Layer factory, typed `auth.api.*` wrappers with tagged errors, runtime-agnostic handler mount, and `CurrentSession` HttpApi middleware.
+Effect v4 integration for Better Auth. Usage lives in [README.md](./README.md); the full design in [SPEC.md](./SPEC.md).
+
+## Public surface
+
+Everything ships from `src/index.ts`, each documented with examples in the README:
+
+- `service(id, options)` / `make(options)` — mint an auth service (`Tag` + `Layer`); options may be a literal or an `Effect` builder.
+- `effectApi(instance)` — every `auth.api.*` endpoint as an `Effect` failing with `BetterAuthApiError`. Discriminate on `statusCode`/`code`, never `message`.
+- `CurrentHeaders` — ambient request headers injected into calls that omit `headers`; explicit per-call headers win.
+- `runAuth` — single-`await` convenience for non-Effect server code (loaders, jobs); rejects unwrapped.
+- `route(Tag)` / `toHttpEffect(Tag)` — runtime-agnostic handler mount (no `node:` imports; runs on Cloudflare Workers).
+- `sessionMiddleware(id, Tag)` — `CurrentSession` / `CurrentSessionOption` HttpApi middleware with a typed `Unauthorized`.
 
 ## Agent skills
 
-### Issue tracker
+- Issues live in this repo's GitHub Issues, managed via `gh`. See `docs/agents/issue-tracker.md`.
+- Triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+- Domain docs: single-context — `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 
-Issues live in this repo's GitHub Issues (`brandhaug/effectful-better-auth`), managed via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+## Tooling
 
-### Triage labels
+- Bun >= 1.4. Tests are `bun test` (not vitest); typecheck is `bun run typecheck`. Run both before submitting.
+- Dependencies are pinned via catalogs in `package.json`; `.github/workflows/catalog-update.yml` bumps them automatically.
+- Peers: `effect ^4.0.0-rc.111`, `better-auth ^1.6.0`. ESM-only, zero runtime deps.
 
-Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: `CONTEXT.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
 ## Commit & Release Conventions
 
-- **All commits and PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/)**: `type(scope): subject`, where `type` is one of `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `revert`. Use `!` or a `BREAKING CHANGE:` footer for breaking changes.
-- This convention is enforced by the **PR Gate** workflow (`.github/workflows/pr-gate.yml`), which fails any PR whose title does not conform.
-- Releases are automated by [release-please](https://github.com/googleapis/release-please-action): merging Conventional Commits to `master` opens a release PR titled `chore(master): release ...`; merging it tags and publishes the release.
-- `CLAUDE.md` is a symlink to this file so Claude Code reads the same conventions.
-
+- All commits and PR titles must follow [Conventional Commits](https://www.conventionalcommits.org/) (`type(scope): subject`), enforced by the **PR Gate** workflow (`.github/workflows/pr-gate.yml`).
+- Releases are automated by release-please: merging Conventional Commits to `master` opens a release PR titled `chore(master): release ...`; merging it tags and publishes to npm via OIDC trusted publishing (`.github/workflows/release.yml`).
