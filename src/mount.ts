@@ -1,4 +1,4 @@
-import type { BetterAuthOptions } from 'better-auth'
+import { type BetterAuthOptions } from 'better-auth'
 import { Effect, type Layer } from 'effect'
 import {
   HttpRouter,
@@ -6,7 +6,7 @@ import {
   HttpServerRequest,
   HttpServerResponse
 } from 'effect/unstable/http'
-import type { Service, Tag } from './types.js'
+import { type Service, type Tag } from './types.js'
 
 /**
  * Primitive mount (SPEC §4): a plain v4 HTTP effect forwarding the incoming
@@ -49,6 +49,10 @@ export const route = <O extends BetterAuthOptions>(
         options?.basePath ?? auth.instance.options.basePath ?? '/api/auth'
       yield* router.add(
         '*',
+        // The basePath is a user-supplied string; the router's PathInput is a template
+        // literal type, so the splice to `/*` cannot be proven at the type level. The
+        // mount owns this one conversion at its only boundary.
+        // oxlint-disable-next-line effect/noAs, typescript/no-unsafe-type-assertion -- string-to-PathInput is the mount's runtime boundary
         `${basePath}/*` as HttpRouter.PathInput,
         toHttpEffect(tag).pipe(Effect.provideService(tag, auth), Effect.orDie)
       )

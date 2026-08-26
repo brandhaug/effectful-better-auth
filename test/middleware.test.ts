@@ -9,7 +9,14 @@ import {
   HttpApiGroup
 } from 'effect/unstable/httpapi'
 import { describe, expect, it } from 'bun:test'
-import { effectApi, make, route, service, sessionMiddleware } from '../src/index.js'
+import {
+  effectApi,
+  make,
+  route,
+  service,
+  sessionMiddleware,
+  type Api
+} from '../src/index.js'
 
 const freshDb = () => ({ user: [], session: [], account: [], verification: [] })
 
@@ -18,7 +25,7 @@ const secret = 'test-secret-at-least-32-characters-long'
 const baseOptions = () => ({
   secret,
   baseURL: 'http://localhost:3000',
-  emailAndPassword: { enabled: true as const },
+  emailAndPassword: { enabled: true },
   database: memoryAdapter(freshDb())
 })
 
@@ -39,19 +46,24 @@ const makeApp = async (id: string, spy?: { throwOnGetSession?: boolean }) => {
   const options = baseOptions()
   const Auth = service(`${id}/Auth`, options)
   const instance = await Effect.runPromise(make(options))
-  const getSessionCalls: Array<{ query?: Record<string, unknown> }> = []
+  type GetSessionInput = NonNullable<Parameters<typeof instance.api.getSession>[0]>
+  const getSessionCalls: Array<{ query?: GetSessionInput['query'] }> = []
   const spiedApi = {
     ...instance.api,
-    getSession: (input: { query?: Record<string, unknown> }) => {
-      getSessionCalls.push(input)
+    getSession: (input: GetSessionInput) => {
+      getSessionCalls.push({ query: input.query })
       if (spy?.throwOnGetSession) {
         throw new APIError(500, { code: 'FAILED_TO_GET_SESSION', message: 'boom' })
       }
-      return instance.api.getSession(input as never)
+      return instance.api.getSession(input)
     }
   }
+  // The spied api is a test double over the raw endpoint map: overriding one member with
+  // a plain function cannot reproduce the mapped `Api` type member-for-member, so the
+  // double asserts itself back onto the library's surface exactly once, here.
   const authLayer = Layer.succeed(Auth.Tag)({
-    api: effectApi(spiedApi as never),
+    // oxlint-disable-next-line effect/noAs, typescript/no-unsafe-type-assertion -- test double over the raw api endpoint map
+    api: effectApi(spiedApi) as Api<typeof options>,
     instance
   })
 
@@ -149,7 +161,8 @@ describe('sessionMiddleware', () => {
     try {
       const response = await app.handler(new Request('http://localhost:3000/me'))
       expect(response.status).toBe(401)
-      expect((await response.json()) as { _tag: string }).toMatchObject({
+      const body: { _tag: string } = await response.json()
+      expect(body).toMatchObject({
         _tag: 'Unauthorized'
       })
     } finally {
@@ -208,7 +221,8 @@ describe('sessionMiddleware', () => {
     try {
       const response = await app.handler(new Request('http://localhost:3000/me'))
       expect(response.status).toBe(500)
-      expect((await response.json()) as { _tag: string }).toMatchObject({
+      const body: { _tag: string } = await response.json()
+      expect(body).toMatchObject({
         _tag: 'BetterAuthApiError',
         code: 'FAILED_TO_GET_SESSION'
       })

@@ -52,7 +52,7 @@ describe('effectApi', () => {
           )
         )
     )
-    expect(result?.user.email).toBe('demo@example.com')
+    expect(result.user.email).toBe('demo@example.com')
   })
 
   it('fails with BetterAuthApiError carrying statusCode and code', async () => {

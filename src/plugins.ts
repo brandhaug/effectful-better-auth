@@ -1,4 +1,4 @@
-import type { BetterAuthOptions } from 'better-auth'
+import { type BetterAuthOptions } from 'better-auth'
 
 type PluginList = NonNullable<BetterAuthOptions['plugins']>
 
