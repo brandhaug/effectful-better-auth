@@ -46,14 +46,19 @@ const makeApp = async (id: string, spy?: { throwOnGetSession?: boolean }) => {
   const options = baseOptions()
   const Auth = service(`${id}/Auth`, options)
   const instance = await Effect.runPromise(make(options))
-  type GetSessionInput = NonNullable<Parameters<typeof instance.api.getSession>[0]>
+  type GetSessionInput = NonNullable<
+    Parameters<typeof instance.api.getSession>[0]
+  >
   const getSessionCalls: Array<{ query?: GetSessionInput['query'] }> = []
   const spiedApi = {
     ...instance.api,
     getSession: (input: GetSessionInput) => {
       getSessionCalls.push({ query: input.query })
       if (spy?.throwOnGetSession) {
-        throw new APIError(500, { code: 'FAILED_TO_GET_SESSION', message: 'boom' })
+        throw new APIError(500, {
+          code: 'FAILED_TO_GET_SESSION',
+          message: 'boom'
+        })
       }
       return instance.api.getSession(input)
     }
@@ -125,7 +130,9 @@ const makeApp = async (id: string, spy?: { throwOnGetSession?: boolean }) => {
     route(Auth.Tag)
   ).pipe(Layer.provide(authLayer), Layer.provide(PlatformLive))
 
-  const { handler, dispose } = HttpRouter.toWebHandler(layer, { disableLogger: true })
+  const { handler, dispose } = HttpRouter.toWebHandler(layer, {
+    disableLogger: true
+  })
 
   const signUp = async (email: string) => {
     const response = await handler(
@@ -160,7 +167,9 @@ describe('sessionMiddleware', () => {
   it('a missing cookie yields the Unauthorized contract error (required)', async () => {
     const app = await makeApp('mw-unauthorized')
     try {
-      const response = await app.handler(new Request('http://localhost:3000/me'))
+      const response = await app.handler(
+        new Request('http://localhost:3000/me')
+      )
       expect(response.status).toBe(401)
       const body: { _tag: string } = await response.json()
       expect(body).toMatchObject({
@@ -174,7 +183,9 @@ describe('sessionMiddleware', () => {
   it('the optional variant provides Option.none for a missing cookie', async () => {
     const app = await makeApp('mw-optional-none')
     try {
-      const response = await app.handler(new Request('http://localhost:3000/who'))
+      const response = await app.handler(
+        new Request('http://localhost:3000/who')
+      )
       expect(response.status).toBe(200)
       expect(await response.json()).toBe('anonymous')
     } finally {
@@ -220,7 +231,9 @@ describe('sessionMiddleware', () => {
   it('session read failures pass through as BetterAuthApiError, untouched', async () => {
     const app = await makeApp('mw-transport', { throwOnGetSession: true })
     try {
-      const response = await app.handler(new Request('http://localhost:3000/me'))
+      const response = await app.handler(
+        new Request('http://localhost:3000/me')
+      )
       expect(response.status).toBe(500)
       const body: { _tag: string } = await response.json()
       expect(body).toMatchObject({

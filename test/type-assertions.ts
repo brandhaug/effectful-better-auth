@@ -33,8 +33,10 @@ const t1 = Effect.gen(function* () {
 })
 
 // T2: error channel is exactly BetterAuthApiError (mutual extends).
-type T1Error = typeof t1 extends Effect.Effect<infer _A, infer E, infer _R> ? E : never
-const t1ErrorCovers: [T1Error] extends [BetterAuthApiError] ? true : never = true
+type T1Error =
+  typeof t1 extends Effect.Effect<infer _A, infer E, infer _R> ? E : never
+const t1ErrorCovers: [T1Error] extends [BetterAuthApiError] ? true : never =
+  true
 const t1ErrorExact: [BetterAuthApiError] extends [T1Error] ? true : never = true
 
 // T3: username-plugin endpoint present, body typed; misspelled key rejected.
@@ -88,9 +90,11 @@ const Built = service(
     }
   })
 )
-type BuiltR = typeof Built extends ServiceResult<infer _O, infer _E, infer R> ? R : never
-const builtRequiresDep: [{ readonly appSecret: string }] extends [BuiltR] ? true : never =
-  true
+type BuiltR =
+  typeof Built extends ServiceResult<infer _O, infer _E, infer R> ? R : never
+const builtRequiresDep: [{ readonly appSecret: string }] extends [BuiltR]
+  ? true
+  : never = true
 // Providing the dependency erases R.
 const provided: Layer.Layer<
   Context.Service.Shape<typeof Built.Tag>,
@@ -105,10 +109,14 @@ export type { T5Success }
 // only the getSession endpoint's return type does, which is why Session<O>
 // derives from the endpoint (see src/types.ts). The check must be
 // `keyof`-based: `extends { role?: ... }` passes even when role is absent.
-type AuthOptions = typeof Auth extends ServiceResult<infer O, infer _E, infer _R> ? O : never
+type AuthOptions =
+  typeof Auth extends ServiceResult<infer O, infer _E, infer _R> ? O : never
 type AuthSession = Session<AuthOptions>
-const t7RoleExists: 'role' extends keyof AuthSession['user'] ? true : never = true
-const t7SessionToken: AuthSession['session'] extends { token: string } ? true : never = true
+const t7RoleExists: 'role' extends keyof AuthSession['user'] ? true : never =
+  true
+const t7SessionToken: AuthSession['session'] extends { token: string }
+  ? true
+  : never = true
 
 // T8 (regression): options built in a function widen the plugins array to a
 // union array, which drops plugin schema inference entirely — unless the
@@ -121,7 +129,8 @@ const makeOptionsInFn = () => ({
   plugins: plugins(username(), admin({ adminRoles: ['admin'] }))
 })
 type FnSession = Session<ReturnType<typeof makeOptionsInFn>>
-const t8RoleSurvivesFn: 'role' extends keyof FnSession['user'] ? true : never = true
+const t8RoleSurvivesFn: 'role' extends keyof FnSession['user'] ? true : never =
+  true
 
 export const typeAssertions = {
   t1,

@@ -1,7 +1,12 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { Context, Effect, Layer } from 'effect'
 import { effectApi } from './effect-api.js'
-import { type Instance, type Service, type ServiceResult, type Tag } from './types.js'
+import {
+  type Instance,
+  type Service,
+  type ServiceResult,
+  type Tag
+} from './types.js'
 
 const resolveOptions = <O extends BetterAuthOptions, E, R>(
   options: O | Effect.Effect<O, E, R>
@@ -30,7 +35,9 @@ export function make<O extends BetterAuthOptions, E, R>(
   return Effect.map(resolveOptions(options), (o) => betterAuth(o))
 }
 
-const toService = <O extends BetterAuthOptions>(instance: Instance<O>): Service<O> => ({
+const toService = <O extends BetterAuthOptions>(
+  instance: Instance<O>
+): Service<O> => ({
   api: effectApi(instance.api),
   instance
 })
@@ -53,6 +60,8 @@ export function service<O extends BetterAuthOptions, E, R>(
   options: O | Effect.Effect<O, E, R>
 ): ServiceResult<O, E, R> {
   const TagKey: Tag<O> = Context.Service<Service<O>>(id)
-  const layer = Layer.effect(TagKey)(Effect.map(make(resolveOptions(options)), toService))
+  const layer = Layer.effect(TagKey)(
+    Effect.map(make(resolveOptions(options)), toService)
+  )
   return { Tag: TagKey, layer }
 }

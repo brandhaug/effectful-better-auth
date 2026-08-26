@@ -31,13 +31,18 @@ describe('toHttpEffect', () => {
 
     const signUp = await handler(signUpRequest('mount@example.com'))
     expect(signUp.status).toBe(200)
-    expect(signUp.headers.get('set-cookie')).toMatch(/better-auth\.session_token=/)
+    expect(signUp.headers.get('set-cookie')).toMatch(
+      /better-auth\.session_token=/
+    )
 
     const signIn = await handler(
       new Request('http://localhost:3000/api/auth/sign-in/email', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email: 'mount@example.com', password: 'password123' })
+        body: JSON.stringify({
+          email: 'mount@example.com',
+          password: 'password123'
+        })
       })
     )
     expect(signIn.status).toBe(200)
@@ -70,7 +75,10 @@ describe('toHttpEffect', () => {
  * A service layer whose instance.handler records the pathnames it is asked
  * to serve — the observable seam for where `route` mounts.
  */
-const spiedService = async (id: string, options: Parameters<typeof make>[0]) => {
+const spiedService = async (
+  id: string,
+  options: Parameters<typeof make>[0]
+) => {
   const Auth = service(id, options)
   const instance = await Effect.runPromise(make(options))
   const seen: string[] = []
@@ -81,7 +89,10 @@ const spiedService = async (id: string, options: Parameters<typeof make>[0]) => 
       return instance.handler(request)
     }
   }
-  const layer = Layer.succeed(Auth.Tag)({ api: effectApi(spied.api), instance: spied })
+  const layer = Layer.succeed(Auth.Tag)({
+    api: effectApi(spied.api),
+    instance: spied
+  })
   return { Tag: Auth.Tag, layer, seen }
 }
 
@@ -94,7 +105,9 @@ describe('route', () => {
     try {
       const signUp = await handler(signUpRequest('route@example.com'))
       expect(signUp.status).toBe(200)
-      expect(signUp.headers.get('set-cookie')).toMatch(/better-auth\.session_token=/)
+      expect(signUp.headers.get('set-cookie')).toMatch(
+        /better-auth\.session_token=/
+      )
     } finally {
       await dispose()
     }
@@ -109,7 +122,9 @@ describe('route', () => {
       route(Auth.Tag).pipe(Layer.provide(Auth.layer))
     )
     try {
-      const signUp = await handler(signUpRequest('custom@example.com', '/custom/auth'))
+      const signUp = await handler(
+        signUpRequest('custom@example.com', '/custom/auth')
+      )
       expect(signUp.status).toBe(200)
       const offPath = await handler(signUpRequest('off@example.com'))
       expect(offPath.status).toBe(404)
@@ -124,7 +139,9 @@ describe('route', () => {
       basePath: '/custom/auth'
     })
     const { handler, dispose } = HttpRouter.toWebHandler(
-      route(auth.Tag, { basePath: '/elsewhere' }).pipe(Layer.provide(auth.layer))
+      route(auth.Tag, { basePath: '/elsewhere' }).pipe(
+        Layer.provide(auth.layer)
+      )
     )
     try {
       await handler(new Request('http://localhost:3000/elsewhere/get-session'))

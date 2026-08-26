@@ -29,5 +29,7 @@ export const runAuth = <O extends BetterAuthOptions, A, E>(options: {
   ) => Effect.Effect<A, E>
 }): Promise<A> =>
   options.runtime.runPromise(
-    Effect.flatMap(options.tag, ({ api }) => options.build(api, options.headers))
+    Effect.flatMap(options.tag, ({ api }) =>
+      options.build(api, options.headers)
+    )
   )

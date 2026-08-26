@@ -1,11 +1,5 @@
 {
-  "plugins": [
-    "typescript",
-    "oxc",
-    "unicorn",
-    "import",
-    "promise"
-  ],
+  "plugins": ["typescript", "oxc", "unicorn", "import", "promise"],
   "jsPlugins": [
     "oxlint-plugin-effect/plugin",
     {
@@ -110,10 +104,16 @@
     // name the channel a conditional type does not consume (e.g. the EffectApi member
     // probe), the same convention the test override documents below. `no-underscore-dangle`
     // backstops it — a genuinely dead underscore-named variable is still flagged there.
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
     "no-console": ["error", { "allow": ["warn", "error"] }],
 
-    "@typescript-eslint/ban-ts-comment": ["error", { "minimumDescriptionLength": 10 }],
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      { "minimumDescriptionLength": 10 }
+    ],
     "no-array-constructor": "error",
     "@typescript-eslint/no-duplicate-enum-values": "error",
     "@typescript-eslint/no-dynamic-delete": "error",
@@ -445,10 +445,7 @@
       }
     },
     {
-      "files": [
-        "test/**",
-        "**/*.test.ts"
-      ],
+      "files": ["test/**", "**/*.test.ts"],
       "rules": {
         // Test requests are built from fetch APIs; `JSON.stringify` for a request body is
         // boundary encoding, not a JSON codec decision.
@@ -472,7 +469,10 @@
         "no-empty-function": "off",
         // type-assertions.ts keeps throwaway conditional-type probes alive with `infer _A`
         // / `infer _R` — the underscore marks the channel the probe does not care about.
-        "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+        "no-unused-vars": [
+          "error",
+          { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+        ]
       }
     }
   ]

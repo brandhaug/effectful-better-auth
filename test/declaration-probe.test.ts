@@ -12,7 +12,12 @@ describe('declaration probe', () => {
     try {
       output = execFileSync(
         join('node_modules', '.bin', 'tsc'),
-        ['-p', join('test', 'declaration-probe', 'tsconfig.json'), '--outDir', outDir],
+        [
+          '-p',
+          join('test', 'declaration-probe', 'tsconfig.json'),
+          '--outDir',
+          outDir
+        ],
         { encoding: 'utf8' }
       )
     } catch (error) {

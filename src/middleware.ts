@@ -6,13 +6,19 @@ import { BetterAuthApiError, Unauthorized } from './errors.js'
 import { type Service, type Session, type Tag } from './types.js'
 
 /** Error contract of the required variant: absent session, or transport failure. */
-export type CurrentSessionErrors = readonly [typeof Unauthorized, typeof BetterAuthApiError]
+export type CurrentSessionErrors = readonly [
+  typeof Unauthorized,
+  typeof BetterAuthApiError
+]
 
 /** Error contract of the optional variant: transport failures only. */
 export type CurrentSessionOptionErrors = typeof BetterAuthApiError
 
 /** The context key handlers yield to read the session under the required variant. */
-export type SessionKey<O extends BetterAuthOptions> = Context.Service<Session<O>, Session<O>>
+export type SessionKey<O extends BetterAuthOptions> = Context.Service<
+  Session<O>,
+  Session<O>
+>
 
 /** The context key handlers yield under the optional variant. */
 export type SessionOptionKey<O extends BetterAuthOptions> = Context.Service<
@@ -62,18 +68,19 @@ export type CurrentSessionOptionId<O extends BetterAuthOptions> =
   }
 
 /** The middleware key of the required variant, as declared on `HttpApi` contracts. */
-export type CurrentSessionKey<O extends BetterAuthOptions> = HttpApiMiddleware.ServiceClass<
-  CurrentSessionId<O>,
-  string,
-  {
-    requires: never
-    provides: Session<O>
-    error: CurrentSessionErrors
-    clientError: never
-    requiredForClient: false
-    security: never
-  }
->
+export type CurrentSessionKey<O extends BetterAuthOptions> =
+  HttpApiMiddleware.ServiceClass<
+    CurrentSessionId<O>,
+    string,
+    {
+      requires: never
+      provides: Session<O>
+      error: CurrentSessionErrors
+      clientError: never
+      requiredForClient: false
+      security: never
+    }
+  >
 
 /** The middleware key of the optional variant. */
 export type CurrentSessionOptionKey<O extends BetterAuthOptions> =
@@ -102,7 +109,11 @@ export type SessionMiddleware<O extends BetterAuthOptions> = {
   readonly CurrentSessionOption: CurrentSessionOptionKey<O>
   readonly Session: SessionKey<O>
   readonly SessionOption: SessionOptionKey<O>
-  readonly layer: Layer.Layer<CurrentSessionId<O> | CurrentSessionOptionId<O>, never, Service<O>>
+  readonly layer: Layer.Layer<
+    CurrentSessionId<O> | CurrentSessionOptionId<O>,
+    never,
+    Service<O>
+  >
 }
 
 /**
@@ -145,10 +156,11 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
   // SAFETY: same bridge as the required variant — `HttpApiMiddleware.Service` cannot
   // see the declared metadata, so the optional key re-states it.
   // oxlint-disable-next-line effect/noAs, effect/noChainedTypeAssertions, typescript/no-unsafe-type-assertion -- HttpApiMiddleware.Service cannot see the declared middleware metadata
-  const CurrentSessionOption = HttpApiMiddleware.Service<CurrentSessionOptionId<O>>()(
-    `${id}/CurrentSessionOption`,
-    { error: BetterAuthApiError }
-  ) as unknown as CurrentSessionOptionKey<O>
+  const CurrentSessionOption = HttpApiMiddleware.Service<
+    CurrentSessionOptionId<O>
+  >()(`${id}/CurrentSessionOption`, {
+    error: BetterAuthApiError
+  }) as unknown as CurrentSessionOptionKey<O>
 
   const readSession = (auth: Service<O>) =>
     Effect.gen(function* () {
@@ -173,22 +185,30 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
   // `HttpApiMiddleware` itself derives `ErrorSchemaFromConstraint<E>["Type"]`.
   type MiddlewareErrorSchema<E extends Schema.Top | readonly Schema.Top[]> =
     E extends readonly Schema.Top[] ? E[number] : E
-  type MiddlewareError<E extends Schema.Top | readonly Schema.Top[]> = MiddlewareErrorSchema<E>['Type']
+  type MiddlewareError<E extends Schema.Top | readonly Schema.Top[]> =
+    MiddlewareErrorSchema<E>['Type']
 
   // The shared shape of both variants: read the session through `GetSession`, map
   // null/absent to the variant's provided value (or fail, for the required variant),
   // and hand the continuation the value under the variant's context key. The error
   // constraint's decoded type is what the transform may fail with — enforced here.
-  const buildVariant = <P, E extends Schema.Top | readonly Schema.Top[]>(params: {
-    readonly auth: Service<O>
-    readonly serviceTag: Context.Service<P, P>
-    readonly transform: (session: Session<O> | null) => Effect.Effect<P, MiddlewareError<E>>
-  }): HttpApiMiddleware.HttpApiMiddleware<P, E, never> =>
+  const buildVariant =
+    <P, E extends Schema.Top | readonly Schema.Top[]>(params: {
+      readonly auth: Service<O>
+      readonly serviceTag: Context.Service<P, P>
+      readonly transform: (
+        session: Session<O> | null
+      ) => Effect.Effect<P, MiddlewareError<E>>
+    }): HttpApiMiddleware.HttpApiMiddleware<P, E, never> =>
     (httpEffect) =>
       Effect.gen(function* () {
         const session = yield* readSession(params.auth)
         const value = yield* params.transform(session)
-        return yield* Effect.provideService(httpEffect, params.serviceTag, value)
+        return yield* Effect.provideService(
+          httpEffect,
+          params.serviceTag,
+          value
+        )
       })
 
   const layer = Layer.mergeAll(
@@ -209,7 +229,10 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
     Layer.effect(CurrentSessionOption)(
       Effect.gen(function* () {
         const auth = yield* tag
-        return buildVariant<Option.Option<Session<O>>, CurrentSessionOptionErrors>({
+        return buildVariant<
+          Option.Option<Session<O>>,
+          CurrentSessionOptionErrors
+        >({
           auth,
           serviceTag: SessionOptionTag,
           transform: (session) => Effect.succeed(Option.fromNullishOr(session))

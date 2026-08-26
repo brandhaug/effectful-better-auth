@@ -35,7 +35,9 @@ const makeAuthRuntime = () => {
   return { auth, runtime }
 }
 
-const withRuntime = async <A>(run: (ctx: AuthContext) => Promise<A>): Promise<A> => {
+const withRuntime = async <A>(
+  run: (ctx: AuthContext) => Promise<A>
+): Promise<A> => {
   const ctx = makeAuthRuntime()
   try {
     return await run(ctx)
@@ -118,7 +120,8 @@ describe('runAuth', () => {
         tag: auth.Tag,
         runtime,
         headers: new Headers({ cookie }),
-        build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
+        build: (api, headers) =>
+          api.getSession({ headers: headers ?? new Headers() })
       })
       expect(session?.user.email).toBe('demo@example.com')
     })
@@ -129,7 +132,8 @@ describe('runAuth', () => {
       runAuth({
         tag: auth.Tag,
         runtime,
-        build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
+        build: (api, headers) =>
+          api.getSession({ headers: headers ?? new Headers() })
       })
     )
     expect(session).toBeNull()

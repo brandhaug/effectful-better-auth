@@ -9,7 +9,12 @@ const makeAuth = () =>
     secret: 'test-secret-at-least-32-characters-long',
     baseURL: 'http://localhost:3000',
     emailAndPassword: { enabled: true },
-    database: memoryAdapter({ user: [], session: [], account: [], verification: [] })
+    database: memoryAdapter({
+      user: [],
+      session: [],
+      account: [],
+      verification: []
+    })
   })
 
 type ProbeInput = { query?: unknown; headers?: Headers }
@@ -30,7 +35,9 @@ describe('CurrentHeaders', () => {
     const { api, calls } = makeRecording()
     const ambient = new Headers({ 'x-ambient': 'yes' })
     await Effect.runPromise(
-      api.probe({ query: { limit: 1 } }).pipe(Effect.provideService(CurrentHeaders, ambient))
+      api
+        .probe({ query: { limit: 1 } })
+        .pipe(Effect.provideService(CurrentHeaders, ambient))
     )
     expect(calls).toHaveLength(1)
     expect(calls[0]?.query).toEqual({ limit: 1 })
@@ -40,7 +47,14 @@ describe('CurrentHeaders', () => {
   it('injects ambient headers into a call made with no arguments', async () => {
     const { api, calls } = makeRecording()
     await Effect.runPromise(
-      api.probe().pipe(Effect.provideService(CurrentHeaders, new Headers({ 'x-ambient': 'yes' })))
+      api
+        .probe()
+        .pipe(
+          Effect.provideService(
+            CurrentHeaders,
+            new Headers({ 'x-ambient': 'yes' })
+          )
+        )
     )
     expect(calls).toHaveLength(1)
     expect(calls[0]?.headers?.get('x-ambient')).toBe('yes')

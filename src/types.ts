@@ -9,7 +9,9 @@ import { type EffectApi } from './effect-api.js'
  */
 
 /** The instance type Better Auth infers from a concrete options object. */
-export type Instance<O extends BetterAuthOptions> = ReturnType<typeof betterAuth<O>>
+export type Instance<O extends BetterAuthOptions> = ReturnType<
+  typeof betterAuth<O>
+>
 
 /**
  * The session as `getSession` actually returns it. Derived from the endpoint
@@ -33,7 +35,10 @@ export type Service<O extends BetterAuthOptions> = {
 }
 
 /** The context key minted by `service(id, options)`. */
-export type Tag<O extends BetterAuthOptions> = Context.Service<Service<O>, Service<O>>
+export type Tag<O extends BetterAuthOptions> = Context.Service<
+  Service<O>,
+  Service<O>
+>
 
 /** The `{ Tag, layer }` pair returned by `service(id, options)`. */
 export type ServiceResult<O extends BetterAuthOptions, E = never, R = never> = {
