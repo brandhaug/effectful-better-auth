@@ -69,6 +69,7 @@ describe('effectApi', () => {
       expect(error).toBeInstanceOf(BetterAuthApiError)
       expect(error.statusCode).toBe(401)
       expect(error.code).toBe('INVALID_EMAIL_OR_PASSWORD')
+      expect(error.cause).toBeInstanceOf(Error)
     }
   })
 

@@ -68,6 +68,9 @@ const toEffect = (
           })
           return endpoint(...callArgs)
         },
+        // Identity mapper: `tryPromise` would otherwise wrap the throw as a
+        // `Cause.UnknownError`; keeping the raw value lets `isAPIError` below
+        // discriminate on the original object.
         catch: (error) => error
       })
     ).pipe(
@@ -78,7 +81,8 @@ const toEffect = (
               statusCode: error.statusCode,
               code: error.body?.code,
               message: error.message,
-              headers: error.headers
+              headers: error.headers,
+              cause: error
             })
           )
         }
