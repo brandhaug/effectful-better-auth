@@ -398,9 +398,10 @@
     // effect plugin does not bundle, loaded from ultracite's vendored copy.
     "anti-slop/no-reflect-apply": "error",
     "anti-slop/no-reflect-get": "error",
-    // no-unknown-returns fires only on *explicit* `unknown` return contracts; the
-    // proxy's `get` handler returns a function type and `ReadonlyArray<unknown>`, which
-    // are not `unknown` itself, so it stays clean.
+    // no-unknown-returns fires only on *explicit* `unknown` return contracts;
+    // `toEffect`'s declared return is a function type and `injectAmbientHeaders`
+    // returns `ReadonlyArray<unknown>`, neither of which is `unknown` itself, so
+    // both stay clean.
     "anti-slop/no-unknown-returns": "error",
     // With `effect/noAs` as the default stance, this rule is the last-resort guard: a
     // cast that survives code review must state its invariant in a `SAFETY:` comment
