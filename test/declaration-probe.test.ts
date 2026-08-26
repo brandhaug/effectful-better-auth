@@ -17,8 +17,13 @@ describe('declaration probe', () => {
       )
     } catch (error) {
       failed = true
-      const e = error as { stdout?: string; stderr?: string }
-      output = `${e.stdout ?? ''}${e.stderr ?? ''}`
+      output = ''
+      if (typeof error === 'object' && error !== null && 'stdout' in error) {
+        output = String(error.stdout)
+      }
+      if (typeof error === 'object' && error !== null && 'stderr' in error) {
+        output += String(error.stderr)
+      }
     }
     expect(output).not.toMatch(/TS4023|TS2742/)
     expect(failed, `tsc failed:\n${output}`).toBe(false)

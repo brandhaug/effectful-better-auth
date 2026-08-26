@@ -12,10 +12,12 @@ const makeAuth = () =>
     database: memoryAdapter({ user: [], session: [], account: [], verification: [] })
   })
 
+type ProbeInput = { query?: unknown; headers?: Headers }
+
 const makeRecording = () => {
-  const calls: Array<unknown> = []
+  const calls: Array<ProbeInput | undefined> = []
   const api = effectApi({
-    probe: (input?: unknown) => {
+    probe: (input?: ProbeInput) => {
       calls.push(input)
       return Promise.resolve({ ok: true })
     }
@@ -31,9 +33,8 @@ describe('CurrentHeaders', () => {
       api.probe({ query: { limit: 1 } }).pipe(Effect.provideService(CurrentHeaders, ambient))
     )
     expect(calls).toHaveLength(1)
-    const input = calls[0] as { query?: unknown; headers?: Headers }
-    expect(input.query).toEqual({ limit: 1 })
-    expect(input.headers?.get('x-ambient')).toBe('yes')
+    expect(calls[0]?.query).toEqual({ limit: 1 })
+    expect(calls[0]?.headers?.get('x-ambient')).toBe('yes')
   })
 
   it('injects ambient headers into a call made with no arguments', async () => {
@@ -42,7 +43,7 @@ describe('CurrentHeaders', () => {
       api.probe().pipe(Effect.provideService(CurrentHeaders, new Headers({ 'x-ambient': 'yes' })))
     )
     expect(calls).toHaveLength(1)
-    expect((calls[0] as { headers?: Headers }).headers?.get('x-ambient')).toBe('yes')
+    expect(calls[0]?.headers?.get('x-ambient')).toBe('yes')
   })
 
   it('explicit per-call headers win over ambient', async () => {
@@ -56,7 +57,7 @@ describe('CurrentHeaders', () => {
       )
     )
     expect(calls[0]).toMatchObject({ headers: explicit })
-    expect((calls[0] as { headers: Headers }).headers.get('x-ambient')).toBe('explicit')
+    expect(calls[0]?.headers?.get('x-ambient')).toBe('explicit')
   })
 
   it('is a no-op when CurrentHeaders is not in context', async () => {

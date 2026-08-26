@@ -1,12 +1,14 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { Context, Effect, Layer } from 'effect'
 import { effectApi } from './effect-api.js'
-import type { Instance, Service, ServiceResult, Tag } from './types.js'
+import { type Instance, type Service, type ServiceResult, type Tag } from './types.js'
 
 const resolveOptions = <O extends BetterAuthOptions, E, R>(
   options: O | Effect.Effect<O, E, R>
-): Effect.Effect<O, E, R> =>
-  Effect.isEffect(options) ? options : Effect.succeed(options)
+): Effect.Effect<O, E, R> => {
+  if (Effect.isEffect(options)) return options
+  return Effect.succeed(options)
+}
 
 /**
  * Primitive factory (SPEC §2): builds the raw better-auth instance as an
@@ -25,7 +27,7 @@ export function make<const O extends BetterAuthOptions>(
 export function make<O extends BetterAuthOptions, E, R>(
   options: O | Effect.Effect<O, E, R>
 ): Effect.Effect<Instance<O>, E, R> {
-  return Effect.map(resolveOptions(options), (o) => betterAuth(o) as Instance<O>)
+  return Effect.map(resolveOptions(options), (o) => betterAuth(o))
 }
 
 const toService = <O extends BetterAuthOptions>(instance: Instance<O>): Service<O> => ({

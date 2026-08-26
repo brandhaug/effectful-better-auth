@@ -1,0 +1,479 @@
+{
+  "plugins": [
+    "typescript",
+    "oxc",
+    "unicorn",
+    "import",
+    "promise"
+  ],
+  "jsPlugins": [
+    "oxlint-plugin-effect/plugin",
+    {
+      // ultracite bundles the anti-slop plugin (upstream is copy-the-source, not
+      // published to npm). plugin.mjs is not in ultracite's exports map, so the
+      // specifier has to be a path.
+      "name": "anti-slop",
+      "specifier": "./node_modules/ultracite/config/oxlint/anti-slop/plugin.mjs"
+    }
+  ],
+  "options": {
+    // A disable directive that suppresses nothing is a lie about the code it sits on.
+    // Denying them keeps stale suppressions from accumulating now that oxlint owns the
+    // rule set. When a rule here is turned off or renamed, its directives have to go in
+    // the same change.
+    "reportUnusedDisableDirectives": "deny"
+  },
+  "categories": {
+    "correctness": "error",
+    // `suspicious` and `perf` are clean as-is; the Effect-plugin and unicorn rules are
+    // tuned individually below. `pedantic` stays off: its `max-lines-per-function` and
+    // `max-dependencies` do not belong in a library whose whole surface is typed helpers.
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "env": {
+    "node": true,
+    "es2024": true,
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    ".git/**",
+    "prototype-typing/**",
+    "test/declaration-probe/.probe-out/**"
+  ],
+  "rules": {
+    "eqeqeq": "error",
+    "no-await-in-loop": "error",
+    "array-callback-return": "error",
+    "no-duplicate-imports": "error",
+    "no-eq-null": "error",
+    "no-promise-executor-return": "error",
+    "no-useless-concat": "error",
+    "object-shorthand": "error",
+    "radix": "error",
+    "no-label-var": "error",
+    // `_tag` is Effect's discriminant on tagged errors and Schema unions, so it shows
+    // up wherever we match on a failure. Every other dangling underscore is noise.
+    "no-underscore-dangle": ["error", { "allow": ["_tag"] }],
+    "no-self-compare": "error",
+    "no-template-curly-in-string": "error",
+    "default-case-last": "error",
+    "no-unneeded-ternary": "error",
+    "no-useless-rename": "error",
+    "no-lone-blocks": "error",
+    "no-sequences": "error",
+    "prefer-const": "error",
+    "prefer-exponentiation-operator": "error",
+    "no-var": "error",
+    "prefer-object-spread": "error",
+    "preserve-caught-error": "error",
+    "block-scoped-var": "error",
+    "guard-for-in": "error",
+    "no-case-declarations": "error",
+    "no-constructor-return": "error",
+    "no-empty": "error",
+    "no-extend-native": "error",
+    "no-fallthrough": "error",
+    "no-implied-eval": "error",
+    "no-labels": "error",
+    "no-loop-func": "error",
+    "no-multi-str": "error",
+    "no-new-func": "error",
+    "no-new-wrappers": "error",
+    "no-object-constructor": "error",
+    "no-proto": "error",
+    "no-prototype-builtins": "error",
+    "no-regex-spaces": "error",
+    "no-return-assign": "error",
+    "no-script-url": "error",
+    "no-shadow": "error",
+    "no-unmodified-loop-condition": "error",
+    "no-unreachable-loop": "error",
+    "no-useless-call": "error",
+    "prefer-object-has-own": "error",
+    "prefer-regex-literals": "error",
+    // `multi-line` only: a brace-less body on its own line is a footgun, because oxfmt breaks
+    // a long single-line `if` at printWidth without adding braces. One-line `if (x) return y`
+    // stays legal.
+    "curly": ["error", "multi-line"],
+    "no-unexpected-multiline": "off",
+    "no-else-return": ["error", { "allowElseIf": false }],
+    "no-lonely-if": "error",
+    "no-nested-ternary": "error",
+    "no-param-reassign": "error",
+    "prefer-destructuring": ["error", { "array": false }],
+    "prefer-template": "error",
+    "default-param-last": "error",
+    // `varsIgnorePattern: "^_"` exists for type-level probes: `infer _R` / `infer _A`
+    // name the channel a conditional type does not consume (e.g. the EffectApi member
+    // probe), the same convention the test override documents below. `no-underscore-dangle`
+    // backstops it — a genuinely dead underscore-named variable is still flagged there.
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+
+    "@typescript-eslint/ban-ts-comment": ["error", { "minimumDescriptionLength": 10 }],
+    "no-array-constructor": "error",
+    "@typescript-eslint/no-duplicate-enum-values": "error",
+    "@typescript-eslint/no-dynamic-delete": "error",
+    "@typescript-eslint/no-empty-object-type": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-extra-non-null-assertion": "error",
+    "@typescript-eslint/no-extraneous-class": "error",
+    "@typescript-eslint/no-misused-new": "error",
+    "@typescript-eslint/no-namespace": "error",
+    "@typescript-eslint/no-non-null-asserted-nullish-coalescing": "error",
+    "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-require-imports": "error",
+    "@typescript-eslint/no-this-alias": "error",
+    "@typescript-eslint/no-unnecessary-condition": "error",
+    "@typescript-eslint/no-unnecessary-type-constraint": "error",
+    "@typescript-eslint/no-unsafe-declaration-merging": "error",
+    "@typescript-eslint/no-unsafe-function-type": "error",
+    "no-unused-expressions": "error",
+    "no-useless-constructor": "error",
+    "@typescript-eslint/no-wrapper-object-types": "error",
+    // prefer-as-const is off because it contradicts `effect/noAs`. Given
+    // `const x: 'queued' = 'queued'`, prefer-as-const demands `as const`, and noAs then
+    // rejects the result. noAs is the rule with the stronger claim, so it wins.
+    "@typescript-eslint/prefer-as-const": "off",
+    "@typescript-eslint/prefer-literal-enum-member": "error",
+    "@typescript-eslint/prefer-namespace-keyword": "error",
+    "@typescript-eslint/require-await": "error",
+    "@typescript-eslint/triple-slash-reference": "error",
+    "@typescript-eslint/adjacent-overload-signatures": "error",
+    "@typescript-eslint/ban-tslint-comment": "error",
+    "@typescript-eslint/consistent-generic-constructors": "error",
+    "@typescript-eslint/consistent-indexed-object-style": ["error", "record"],
+    // "type" (not the default "interface"): Effect service shapes and schema-derived
+    // aliases are type aliases throughout this repo, and `interface` cannot express them.
+    // Declaration merging (`declare module`) and self-referential types still need
+    // `interface`; those few sites carry a disable comment naming this rule.
+    "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      { "prefer": "type-imports", "fixStyle": "inline-type-imports" }
+    ],
+    "@typescript-eslint/no-confusing-non-null-assertion": "error",
+    "no-empty-function": "error",
+    "@typescript-eslint/prefer-enum-initializers": "error",
+    "@typescript-eslint/prefer-for-of": "error",
+    "@typescript-eslint/prefer-function-type": "error",
+    "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/prefer-ts-expect-error": "error",
+    "@typescript-eslint/no-invalid-void-type": "error",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-misused-promises": "error",
+    "@typescript-eslint/await-thenable": "error",
+    "@typescript-eslint/no-misused-spread": "error",
+    "@typescript-eslint/no-for-in-array": "error",
+    "@typescript-eslint/no-array-delete": "error",
+    "@typescript-eslint/no-mixed-enums": "error",
+    "@typescript-eslint/no-duplicate-type-constituents": "error",
+    // Type-aware: flags enum-vs-literal comparisons where the literal is not a member,
+    // which is exactly the drift a renamed enum member leaves behind.
+    "@typescript-eslint/no-unsafe-enum-comparison": "error",
+    "@typescript-eslint/unbound-method": "error",
+    "@typescript-eslint/no-base-to-string": "error",
+    "@typescript-eslint/return-await": "error",
+    "@typescript-eslint/switch-exhaustiveness-check": "error",
+    "@typescript-eslint/restrict-plus-operands": "error",
+    "@typescript-eslint/require-array-sort-compare": "error",
+    "@typescript-eslint/no-unnecessary-boolean-literal-compare": "error",
+    "@typescript-eslint/use-unknown-in-catch-callback-variable": "error",
+    "@typescript-eslint/no-unnecessary-template-expression": "error",
+    "@typescript-eslint/no-deprecated": "error",
+    // no-unnecessary-type-assertion stays off. Under oxlint-tsgolint 7.x it is at least
+    // deterministic, but it still reports false positives: it called `(await res.json())
+    // as { _tag: string }` unnecessary, and applying the fix produced TS2571 because
+    // `Response.json()` returns `unknown`. Since `oxlint --fix` may run in pre-commit, a
+    // false positive here silently strips a needed cast. Re-evaluate on the next
+    // oxlint-tsgolint upgrade.
+    "@typescript-eslint/no-unnecessary-type-assertion": "off",
+    // consistent-return is off: the proxy's runtime branches return the cast proxy, the
+    // generator helpers return middleware functions, and the effectful options builder
+    // accepts both a plain object and an Effect — "return a value, or fall through" is
+    // the shape these polymorphic signatures need, and `return undefined` buys nothing.
+    "@typescript-eslint/consistent-return": "off",
+    // no-unnecessary-type-arguments is off: it fights Effect's convention of spelling out
+    // the channels. `Effect.Effect<A, unknown, never>` and `Effect.context<never>()` say
+    // "no requirements" to the reader; collapsing them to the defaults makes an Effect
+    // signature harder to read, not easier.
+    "@typescript-eslint/no-unnecessary-type-arguments": "off",
+    "@typescript-eslint/no-confusing-void-expression": [
+      "error",
+      { "ignoreArrowShorthand": true }
+    ],
+
+    "unicorn/catch-error-name": "error",
+    "unicorn/consistent-existence-index-check": "error",
+    "unicorn/filename-case": "error",
+    "unicorn/new-for-builtins": "error",
+    "unicorn/no-abusive-eslint-disable": "error",
+    "unicorn/no-await-in-promise-methods": "error",
+    "unicorn/no-empty-file": "error",
+    // strict, not the default loose strategy: loose skips `Error` itself, which is the
+    // one builtin a library boundary might probe by hand. The Schema.declare guard in
+    // errors.ts exempted per file below.
+    "unicorn/no-instanceof-builtins": ["error", { "strategy": "strict" }],
+    "unicorn/no-invalid-fetch-options": "error",
+    "unicorn/no-negated-condition": "error",
+    "unicorn/no-new-array": "error",
+    "unicorn/no-single-promise-in-promise-methods": "error",
+    "unicorn/no-thenable": "error",
+    "unicorn/no-typeof-undefined": "error",
+    "unicorn/no-useless-fallback-in-spread": "error",
+    "unicorn/no-useless-promise-resolve-reject": "error",
+    "unicorn/no-useless-spread": "error",
+    "unicorn/no-useless-switch-case": "error",
+    "unicorn/no-useless-undefined": [
+      "error",
+      { "checkArguments": false, "checkArrowFunctionBody": false }
+    ],
+    "unicorn/no-zero-fractions": "error",
+    "unicorn/numeric-separators-style": "error",
+    "unicorn/prefer-array-find": "error",
+    "unicorn/prefer-array-flat-map": "error",
+    "unicorn/prefer-array-some": "error",
+    "unicorn/prefer-date-now": "error",
+    "unicorn/prefer-logical-operator-over-ternary": "error",
+    "unicorn/prefer-native-coercion-functions": "error",
+    "unicorn/prefer-node-protocol": "error",
+    "unicorn/prefer-number-properties": "error",
+    "unicorn/prefer-object-from-entries": "error",
+    "unicorn/prefer-regexp-test": "error",
+    "unicorn/prefer-set-has": "error",
+    "unicorn/prefer-spread": "error",
+    "unicorn/prefer-string-replace-all": "error",
+    "unicorn/prefer-string-slice": "error",
+    "unicorn/require-array-join-separator": "error",
+    "unicorn/switch-case-braces": "error",
+    "unicorn/text-encoding-identifier-case": "error",
+    "unicorn/consistent-date-clone": "error",
+    "unicorn/consistent-empty-array-spread": "error",
+    "unicorn/error-message": "error",
+    "unicorn/no-accessor-recursion": "error",
+    "unicorn/no-array-fill-with-reference-type": "error",
+    // no-array-method-this-argument stays off. It matches any `X.map(a, b)` /
+    // `X.forEach(a, b)` call and reads the second argument as `thisArg`. Effect's
+    // data-first signatures (`Effect.map(self, f)`, `Effect.forEach(self, f)`,
+    // `Logger.map(self, f)`) have exactly that shape, so every one of them is flagged.
+    "unicorn/no-array-method-this-argument": "off",
+    "unicorn/no-array-sort": "error",
+    "unicorn/no-await-expression-member": "error",
+    "unicorn/no-confusing-array-with": "error",
+    "unicorn/no-instanceof-array": "error",
+    "unicorn/no-length-as-slice-end": "error",
+    "unicorn/no-magic-array-flat-depth": "error",
+    "unicorn/no-negation-in-equality-check": "error",
+    "unicorn/no-object-as-default-parameter": "error",
+    "unicorn/no-unnecessary-array-splice-count": "error",
+    "unicorn/no-unnecessary-await": "error",
+    "unicorn/no-unnecessary-slice-end": "error",
+    "unicorn/no-unreadable-array-destructuring": "error",
+    "unicorn/no-useless-length-check": "error",
+    "unicorn/prefer-math-min-max": "error",
+    "unicorn/prefer-set-size": "error",
+    "unicorn/prefer-structured-clone": "error",
+    "unicorn/prefer-type-error": "error",
+    "unicorn/require-number-to-fixed-digits-argument": "error",
+    "unicorn/throw-new-error": "error",
+
+    // Matches the `inline-type-imports` fixStyle on consistent-type-imports above, so both
+    // halves of the type-import style are enforced instead of only what the fixer emits.
+    "import/consistent-type-specifier-style": ["error", "prefer-inline"],
+    "import/no-absolute-path": "error",
+    "import/no-cycle": "error",
+    "import/no-duplicates": "error",
+    "import/no-empty-named-blocks": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-named-as-default": "error",
+    "import/no-self-import": "error",
+    "import/no-unassigned-import": "error",
+
+    "oxc/approx-constant": "error",
+    "oxc/bad-array-method-on-arguments": "error",
+    "oxc/bad-bitwise-operator": "error",
+    "oxc/bad-char-at-comparison": "error",
+    "oxc/bad-comparison-sequence": "error",
+    "oxc/bad-match-all-arg": "error",
+    "oxc/bad-min-max-func": "error",
+    "oxc/bad-object-literal-comparison": "error",
+    "oxc/bad-replace-all-arg": "error",
+    "oxc/branches-sharing-code": "error",
+    "oxc/const-comparisons": "error",
+    "oxc/double-comparisons": "error",
+    "oxc/erasing-op": "error",
+    "oxc/misrefactored-assign-op": "error",
+    "oxc/missing-throw": "error",
+    "oxc/no-accumulating-spread": "error",
+    "oxc/no-async-endpoint-handlers": "error",
+    "oxc/no-barrel-file": "error",
+    "oxc/number-arg-out-of-range": "error",
+    "oxc/only-used-in-recursion": "error",
+    "oxc/uninvoked-array-callback": "error",
+
+    "promise/always-return": "error",
+    "promise/no-callback-in-promise": "error",
+    "promise/no-multiple-resolved": "error",
+    "promise/no-nesting": "error",
+    "promise/no-new-statics": "error",
+    "promise/no-promise-in-callback": "error",
+    "promise/no-return-wrap": "error",
+    "promise/param-names": "error",
+    "promise/prefer-catch": "error",
+    "promise/spec-only": "error",
+    "promise/valid-params": "error",
+
+    // Effect discipline (oxlint-plugin-effect), the full `recommended` preset except the
+    // three rules noted below. The plugin's README is the contract for each rule.
+    "effect/noAs": "error",
+    "effect/noAsyncFunction": "error",
+    "effect/noChainedTypeAssertions": "error",
+    "effect/noConditionalEmptyObjectSpread": "error",
+    "effect/noDynamicImports": "error",
+    "effect/noEffectBind": "error",
+    "effect/noEffectDo": "error",
+    "effect/noGlobals": "error",
+    "effect/noInlineProvide": "error",
+    "effect/noKnownValueWidening": "error",
+    "effect/noManagedRuntimeInEffect": "error",
+    "effect/noModuleMocks": "error",
+    "effect/noNestedEffectGen": "error",
+    "effect/noNewError": "error",
+    "effect/noNewPromise": "error",
+    "effect/noNodeBuiltinImport": "error",
+    // noNullish stays off. It bans `null` and `undefined` outright, which contradicts the
+    // Effect v4 schema guidance this repo follows: `Schema.optionalKey` for absent keys,
+    // `Schema.optional` when explicit `undefined` is part of the contract, and
+    // `Schema.NullOr` / `UndefinedOr` / `NullishOr` when nullish values are part of the
+    // encoded contract (errors.ts' `code: Schema.UndefinedOr(Schema.String)`). The session
+    // contract is also null-or-session, not Option<session>, because that is what Better
+    // Auth's `getSession` endpoint actually resolves.
+    "effect/noNullish": "off",
+    "effect/noObjectParameters": "error",
+    "effect/noPerCallCacheConstruction": "error",
+    "effect/noRunCollectOnUnboundedStream": "error",
+    "effect/noRuntimeTypeof": "off",
+    // noRuntimeTypeof stays off. The two sites that narrow with `typeof` are boundary
+    // parsing, not flow control: errors.ts' `Schema.declare` guard is the canonical shape
+    // for a custom schema (Effect's own docs write `typeof u === 'object' && u !== null`),
+    // and the proxy's input splice has to distinguish "an options object" from "anything
+    // else" at the runtime seam. The rule would force a parse step where none exists.
+    "effect/noSequentialEffectAll": "error",
+    // noShapeInSymbolNames stays off. It flags any identifier whose name contains "shape",
+    // which includes Effect's own exported `Context.ServiceClass.Shape` / `Context.Service.Shape`
+    // — the very types this repo's middleware ids extend. Policing the spelling of a
+    // framework's public type name is not a rule this library can obey.
+    "effect/noShapeInSymbolNames": "off",
+    "effect/noSilentCatchAll": "error",
+    "effect/noTernary": "error",
+    "effect/noTestLifecycleHooks": "error",
+    "effect/noThrowStatement": "error",
+    "effect/noTryCatch": "error",
+    "effect/noUnboundedConcurrency": "error",
+    "effect/noUnboundedRetry": "error",
+    // noUnknownParameters stays off. The proxy's whole contract is "accept anything at the
+    // runtime boundary and re-type it via the mapped `EffectApi` surface"; `injectAmbientHeaders`
+    // and the `catch` callback deal in `unknown` on purpose. Forcing named parameters here
+    // would push the API back toward `any`.
+    "effect/noUnknownParameters": "off",
+    "effect/noUnknownTypeAliases": "error",
+    // noUnsafeDictionaryType stays off. Every flagged site is a type-level contract over a
+    // third-party endpoint map (`Api extends Record<string, unknown>`, the `RelaxHeaders`
+    // conditional over better-auth's input bags) — generic constraints, not object
+    // dictionaries holding unknown values at runtime. The rule's fix would force this
+    // library to name every better-auth endpoint, which is the opposite of the plugin-schema
+    // inference SPEC §2 exists to preserve.
+    "effect/noUnsafeDictionaryType": "off",
+    "effect/noWidenThenAssert": "error",
+    "effect/preferCatchTag": "error",
+    "effect/preferEffectFn": "error",
+    "effect/preferMatchTagsExhaustive": "error",
+    "effect/preferPredicateIsTagged": "error",
+    "effect/preferServiceOf": "error",
+    "effect/requireNamedEffectFn": "error",
+
+    // The rest of the upstream anti-slop set. `oxlint-plugin-effect` already re-exports
+    // ten of the fifteen rules under `effect/no*` names (see the note at the top of the
+    // effect block), so those stay there and report once. These four are the ones the
+    // effect plugin does not bundle, loaded from ultracite's vendored copy.
+    "anti-slop/no-reflect-apply": "error",
+    "anti-slop/no-reflect-get": "error",
+    // no-unknown-returns fires only on *explicit* `unknown` return contracts;
+    // `toEffect`'s declared return is a function type and `injectAmbientHeaders`
+    // returns `ReadonlyArray<unknown>`, neither of which is `unknown` itself, so
+    // both stay clean. The `EffectApi` member probe matches promise-returning
+    // endpoints with `Promise<infer _R>` rather than `Promise<unknown>`, so the
+    // rule has nothing to flag there either.
+    "anti-slop/no-unknown-returns": "error",
+    // With `effect/noAs` as the default stance, this rule is the last-resort guard: a
+    // cast that survives code review must state its invariant in a `SAFETY:` comment
+    // immediately before the assertion.
+    "anti-slop/require-safety-comment-for-type-assertion": "error"
+  },
+  "overrides": [
+    {
+      // Architecture boundary (SPEC §4): the mount must run on Cloudflare Workers
+      // unchanged, so no file under src/ may reach for a node builtin. The test override
+      // below keeps the lint honest about why the sibling test is exempt.
+      "files": ["src/**"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["node:*"],
+                "message": "src/ must stay Workers-clean (SPEC §4): no node builtin imports. If a node API is truly required, it belongs in a runtime adapter."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      // Schema.TaggedError<X>(tag)(tag, fields) defines a class whose constructor is
+      // instantiated with `new` by callers; the factory call itself is not a throw, so the
+      // "always `new`" rule reads the Effect idiom as a bug. errors.ts is the only file
+      // with this shape.
+      "files": ["src/errors.ts"],
+      "rules": {
+        "unicorn/throw-new-error": "off"
+      }
+    },
+    {
+      "files": [
+        "test/**",
+        "**/*.test.ts"
+      ],
+      "rules": {
+        // Test requests are built from fetch APIs; `JSON.stringify` for a request body is
+        // boundary encoding, not a JSON codec decision.
+        "effect/noGlobals": "off",
+        // Tests exercise throws, `new Error`, `Promise.reject`, `instanceof Error`, and
+        // `typeof` narrowing deliberately — they are the subject under test.
+        "effect/noThrowStatement": "off",
+        "effect/noNewError": "off",
+        "effect/noNewPromise": "off",
+        "effect/noTryCatch": "off",
+        "effect/noAsyncFunction": "off",
+        "effect/noRuntimeTypeof": "off",
+        // The workers-safety and declaration-probe tests import node builtins precisely to
+        // assert that src/ never does (and to shell out to tsc). src/ itself stays clean.
+        "effect/noNodeBuiltinImport": "off",
+        // Row builders and request helpers belong beside the cases they serve. Hoisting
+        // them to module scope to save an allocation per test is the wrong trade.
+        "unicorn/consistent-function-scoping": "off",
+        // Async test functions are bun:test's own contract, not a Promise escape hatch.
+        "@typescript-eslint/require-await": "off",
+        "no-empty-function": "off",
+        // type-assertions.ts keeps throwaway conditional-type probes alive with `infer _A`
+        // / `infer _R` — the underscore marks the channel the probe does not care about.
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+      }
+    }
+  ]
+}
