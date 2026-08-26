@@ -106,7 +106,11 @@
     "prefer-destructuring": ["error", { "array": false }],
     "prefer-template": "error",
     "default-param-last": "error",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    // `varsIgnorePattern: "^_"` exists for type-level probes: `infer _R` / `infer _A`
+    // name the channel a conditional type does not consume (e.g. the EffectApi member
+    // probe), the same convention the test override documents below. `no-underscore-dangle`
+    // backstops it — a genuinely dead underscore-named variable is still flagged there.
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "no-console": ["error", { "allow": ["warn", "error"] }],
 
     "@typescript-eslint/ban-ts-comment": ["error", { "minimumDescriptionLength": 10 }],
@@ -401,7 +405,9 @@
     // no-unknown-returns fires only on *explicit* `unknown` return contracts;
     // `toEffect`'s declared return is a function type and `injectAmbientHeaders`
     // returns `ReadonlyArray<unknown>`, neither of which is `unknown` itself, so
-    // both stay clean.
+    // both stay clean. The `EffectApi` member probe matches promise-returning
+    // endpoints with `Promise<infer _R>` rather than `Promise<unknown>`, so the
+    // rule has nothing to flag there either.
     "anti-slop/no-unknown-returns": "error",
     // With `effect/noAs` as the default stance, this rule is the last-resort guard: a
     // cast that survives code review must state its invariant in a `SAFETY:` comment

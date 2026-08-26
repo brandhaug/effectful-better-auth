@@ -23,11 +23,7 @@ type RelaxHeaders<C> = C extends Record<string, unknown>
  * consumers needing the raw `Response` or headers.
  */
 export type EffectApi<Api> = {
-  // `Promise<unknown>` here is a type-level probe (does the member return a promise?),
-  // not a function whose contract is unknown — the actual result type is inferred from
-  // the member's own return in the success branch below.
-  // oxlint-disable-next-line anti-slop/no-unknown-returns -- Promise<unknown> is a structural probe, not a return contract
-  readonly [K in keyof Api as Api[K] extends (...args: never[]) => Promise<unknown>
+  readonly [K in keyof Api as Api[K] extends (...args: never[]) => Promise<infer _R>
     ? K
     : never]: Api[K] extends (...args: infer P) => Promise<infer R>
     ? (...args: { readonly [I in keyof P]: RelaxHeaders<P[I]> }) => Effect.Effect<R, BetterAuthApiError>
@@ -102,8 +98,8 @@ export const effectApi = <Api extends Record<string, unknown>>(api: Api): Effect
   // the library's only such boundary, so the cast lives here, once.
   // oxlint-disable-next-line effect/noAs, effect/noKnownValueWidening, typescript/no-unsafe-type-assertion -- the proxy's mapped EffectApi surface is only expressible as a cast
   new Proxy(api, {
-    get: (_target, prop) => {
+    get: (target, prop) => {
       if (typeof prop !== 'string') return
-      return toEffect(api[prop])
+      return toEffect(target[prop])
     }
   }) as EffectApi<Api>
