@@ -32,7 +32,7 @@
 		}
 	},
 	"scripts": {
-		"prepare": "husky",
+		"prepare": "git config core.hooksPath .githooks",
 		"lint": "oxlint --type-aware",
 		"lint:fix": "oxlint --type-aware --fix",
 		"typecheck": "tsc --noEmit",
@@ -48,7 +48,6 @@
 		"@types/node": "catalog:",
 		"better-auth": "catalog:",
 		"effect": "catalog:",
-		"husky": "catalog:",
 		"lint-staged": "catalog:",
 		"oxfmt": "catalog:",
 		"oxlint": "1.79.0",
@@ -80,7 +79,6 @@
 		"@types/node": "24",
 		"better-auth": "1.7.1",
 		"effect": "4.0.0-rc.111",
-		"husky": "9.1.7",
 		"lint-staged": "17.3.0",
 		"oxfmt": "0.64.0",
 		"typescript": "7.0.2"
