@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v0.3.0...effectful-better-auth-v0.3.1) (2026-08-27)
+
+
+### Miscellaneous
+
+* align tooling with canonical setup ([#35](https://github.com/brandhaug/effectful-better-auth/issues/35)) ([40429d6](https://github.com/brandhaug/effectful-better-auth/commit/40429d69de90a77eb2cb3e70e7b419e81beb350a))
+
 ## [0.3.0](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v0.2.0...effectful-better-auth-v0.3.0) (2026-08-26)
 
 
