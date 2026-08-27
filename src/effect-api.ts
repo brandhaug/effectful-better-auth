@@ -9,11 +9,11 @@ import { BetterAuthApiError } from './errors.js'
  * none). Every other property — and explicit per-call headers — is unchanged.
  */
 type RelaxHeaders<C> =
-  C extends Record<string, unknown>
-    ? C extends { headers: infer H }
-      ? Omit<C, 'headers'> & { headers?: H | undefined }
-      : C
-    : C
+	C extends Record<string, unknown>
+		? C extends { headers: infer H }
+			? Omit<C, 'headers'> & { headers?: H | undefined }
+			: C
+		: C
 
 /**
  * Maps every promise-returning endpoint of `auth.api` to an Effect failing
@@ -24,15 +24,15 @@ type RelaxHeaders<C> =
  * consumers needing the raw `Response` or headers.
  */
 export type EffectApi<Api> = {
-  readonly [
-    K in keyof Api as Api[K] extends (...args: never[]) => Promise<infer _R>
-      ? K
-      : never
-  ]: Api[K] extends (...args: infer P) => Promise<infer R>
-    ? (
-        ...args: { readonly [I in keyof P]: RelaxHeaders<P[I]> }
-      ) => Effect.Effect<R, BetterAuthApiError>
-    : never
+	readonly [
+		K in keyof Api as Api[K] extends (...args: never[]) => Promise<infer _R>
+			? K
+			: never
+	]: Api[K] extends (...args: infer P) => Promise<infer R>
+		? (
+				...args: { readonly [I in keyof P]: RelaxHeaders<P[I]> }
+			) => Effect.Effect<R, BetterAuthApiError>
+		: never
 }
 
 /**
@@ -42,15 +42,15 @@ export type EffectApi<Api> = {
  * headers.
  */
 const injectAmbientHeaders = (
-  args: readonly unknown[],
-  headers: Headers
+	args: readonly unknown[],
+	headers: Headers
 ): ReadonlyArray<unknown> => {
-  const [input] = args
-  if (input === undefined || input === null) {
-    return [{ headers }, ...args.slice(1)]
-  }
-  if (typeof input !== 'object' || 'headers' in input) return args
-  return [{ ...input, headers }, ...args.slice(1)]
+	const [input] = args
+	if (input === undefined || input === null) {
+		return [{ headers }, ...args.slice(1)]
+	}
+	if (typeof input !== 'object' || 'headers' in input) return args
+	return [{ ...input, headers }, ...args.slice(1)]
 }
 
 /**
@@ -62,42 +62,42 @@ const injectAmbientHeaders = (
  * `EffectApi` surface which drops non-function members.
  */
 const toEffect = (
-  endpoint: unknown
+	endpoint: unknown
 ):
-  | ((...args: unknown[]) => Effect.Effect<unknown, BetterAuthApiError>)
-  | undefined => {
-  if (typeof endpoint !== 'function') return
-  return (...args: unknown[]) =>
-    Effect.flatMap(Effect.serviceOption(CurrentHeaders), (ambient) =>
-      Effect.tryPromise({
-        try: () => {
-          const callArgs = Option.match(ambient, {
-            onNone: () => args,
-            onSome: (headers) => injectAmbientHeaders(args, headers)
-          })
-          return endpoint(...callArgs)
-        },
-        // Identity mapper: `tryPromise` would otherwise wrap the throw as a
-        // `Cause.UnknownError`; keeping the raw value lets `isAPIError` below
-        // discriminate on the original object.
-        catch: (error) => error
-      })
-    ).pipe(
-      Effect.catch((error) => {
-        if (isAPIError(error)) {
-          return Effect.fail(
-            new BetterAuthApiError({
-              statusCode: error.statusCode,
-              code: error.body?.code,
-              message: error.message,
-              headers: error.headers,
-              cause: error
-            })
-          )
-        }
-        return Effect.die(error)
-      })
-    )
+	| ((...args: unknown[]) => Effect.Effect<unknown, BetterAuthApiError>)
+	| undefined => {
+	if (typeof endpoint !== 'function') return
+	return (...args: unknown[]) =>
+		Effect.flatMap(Effect.serviceOption(CurrentHeaders), (ambient) =>
+			Effect.tryPromise({
+				try: () => {
+					const callArgs = Option.match(ambient, {
+						onNone: () => args,
+						onSome: (headers) => injectAmbientHeaders(args, headers)
+					})
+					return endpoint(...callArgs)
+				},
+				// Identity mapper: `tryPromise` would otherwise wrap the throw as a
+				// `Cause.UnknownError`; keeping the raw value lets `isAPIError` below
+				// discriminate on the original object.
+				catch: (error) => error
+			})
+		).pipe(
+			Effect.catch((error) => {
+				if (isAPIError(error)) {
+					return Effect.fail(
+						new BetterAuthApiError({
+							statusCode: error.statusCode,
+							code: error.body?.code,
+							message: error.message,
+							headers: error.headers,
+							cause: error
+						})
+					)
+				}
+				return Effect.die(error)
+			})
+		)
 }
 
 /**
@@ -106,15 +106,15 @@ const toEffect = (
  * members to `toEffect`; anything else resolves to `undefined`.
  */
 export const effectApi = <Api extends Record<string, unknown>>(
-  api: Api
+	api: Api
 ): EffectApi<Api> =>
-  // SAFETY: a runtime Proxy over a third-party object cannot be proven to BE its mapped
-  // type — `satisfies` has no answer for a value manufactured at runtime. The proxy is
-  // the library's only such boundary, so the cast lives here, once.
-  // oxlint-disable-next-line effect/noAs, effect/noKnownValueWidening, typescript/no-unsafe-type-assertion -- the proxy's mapped EffectApi surface is only expressible as a cast
-  new Proxy(api, {
-    get: (target, prop) => {
-      if (typeof prop !== 'string') return
-      return toEffect(target[prop])
-    }
-  }) as EffectApi<Api>
+	// SAFETY: a runtime Proxy over a third-party object cannot be proven to BE its mapped
+	// type — `satisfies` has no answer for a value manufactured at runtime. The proxy is
+	// the library's only such boundary, so the cast lives here, once.
+	// oxlint-disable-next-line effect/noAs, effect/noKnownValueWidening, typescript/no-unsafe-type-assertion -- the proxy's mapped EffectApi surface is only expressible as a cast
+	new Proxy(api, {
+		get: (target, prop) => {
+			if (typeof prop !== 'string') return
+			return toEffect(target[prop])
+		}
+	}) as EffectApi<Api>

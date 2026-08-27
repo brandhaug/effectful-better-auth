@@ -1,14 +1,14 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "skipLibCheck": true,
-    "rootDir": "../..",
-    "outDir": "./.probe-out"
-  },
-  "include": ["fixture.ts", "../../src"]
+	"compilerOptions": {
+		"strict": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"skipLibCheck": true,
+		"rootDir": "../..",
+		"outDir": "./.probe-out"
+	},
+	"include": ["fixture.ts", "../../src"]
 }

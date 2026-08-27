@@ -7,4 +7,4 @@ import { Context } from 'effect'
  * calls pass through untouched.
  */
 export const CurrentHeaders: Context.Service<Headers, Headers> =
-  Context.Service<Headers>('~effectful-better-auth/CurrentHeaders')
+	Context.Service<Headers>('~effectful-better-auth/CurrentHeaders')

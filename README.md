@@ -25,18 +25,18 @@ import { service } from 'effectful-better-auth'
 // Mint a service: a context Tag plus a Layer. Keep options literal —
 // the plugins array is what types your api surface.
 export const Auth = service('app/Auth', {
-  secret: 'a-secret-at-least-32-characters-long!!',
-  baseURL: 'http://localhost:3000',
-  emailAndPassword: { enabled: true },
-  database: memoryAdapter({}),
-  plugins: [admin({ adminRoles: ['admin'] })]
+	secret: 'a-secret-at-least-32-characters-long!!',
+	baseURL: 'http://localhost:3000',
+	emailAndPassword: { enabled: true },
+	database: memoryAdapter({}),
+	plugins: [admin({ adminRoles: ['admin'] })]
 })
 
 // Every auth.api endpoint is an Effect, failing with BetterAuthApiError.
 export const firstAdmins = Effect.gen(function* () {
-  const auth = yield* Auth.Tag
-  const { users } = yield* auth.api.listUsers({ query: { limit: 10 } })
-  return users
+	const auth = yield* Auth.Tag
+	const { users } = yield* auth.api.listUsers({ query: { limit: 10 } })
+	return users
 })
 
 export const main = firstAdmins.pipe(Effect.provide(Auth.layer))
@@ -50,9 +50,9 @@ Failures carry `statusCode`, `code` (matching `$ERROR_CODES`), `message`, and `h
 
 ```ts
 firstAdmins.pipe(
-  Effect.catchTag('BetterAuthApiError', (e) =>
-    e.statusCode === 401 ? Effect.succeed([]) : Effect.fail(e)
-  )
+	Effect.catchTag('BetterAuthApiError', (e) =>
+		e.statusCode === 401 ? Effect.succeed([]) : Effect.fail(e)
+	)
 )
 ```
 
@@ -65,8 +65,8 @@ import { Effect } from 'effect'
 import { CurrentHeaders } from 'effectful-better-auth'
 
 const session = Effect.gen(function* () {
-  const auth = yield* Auth.Tag
-  return yield* auth.api.getSession({}) // headers injected from context
+	const auth = yield* Auth.Tag
+	return yield* auth.api.getSession({}) // headers injected from context
 }).pipe(Effect.provideService(CurrentHeaders, new Headers(request.headers)))
 ```
 
@@ -78,10 +78,10 @@ For `auth.api.*` calls outside the Effect world (server functions, loaders, jobs
 import { runAuth } from 'effectful-better-auth'
 
 const session = await runAuth({
-  tag: Auth.Tag,
-  runtime, // ManagedRuntime.make(Auth.layer)
-  headers: new Headers({ cookie }),
-  build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
+	tag: Auth.Tag,
+	runtime, // ManagedRuntime.make(Auth.layer)
+	headers: new Headers({ cookie }),
+	build: (api, headers) => api.getSession({ headers: headers ?? new Headers() })
 })
 ```
 
@@ -95,14 +95,14 @@ When options are built in a function (including an effectful builder), wrap the 
 import { plugins, service } from 'effectful-better-auth'
 
 const build = Effect.gen(function* () {
-  const config = yield* MyConfig
-  return {
-    secret: config.secret,
-    baseURL: config.baseURL,
-    emailAndPassword: { enabled: true },
-    database: myAdapter(config),
-    plugins: plugins(username(), admin({ adminRoles: ['admin'] }))
-  }
+	const config = yield* MyConfig
+	return {
+		secret: config.secret,
+		baseURL: config.baseURL,
+		emailAndPassword: { enabled: true },
+		database: myAdapter(config),
+		plugins: plugins(username(), admin({ adminRoles: ['admin'] }))
+	}
 })
 
 export const Auth = service('app/Auth', build)
@@ -119,8 +119,8 @@ import { route } from 'effectful-better-auth'
 import { Auth } from './auth.js'
 
 const routes = Layer.mergeAll(
-  route(Auth.Tag)
-  // ...your other routes / HttpApiBuilder.layer(...)
+	route(Auth.Tag)
+	// ...your other routes / HttpApiBuilder.layer(...)
 ).pipe(Layer.provide(Auth.layer))
 
 // Worker / web-standard entrypoint:
@@ -136,7 +136,7 @@ import { toHttpEffect } from 'effectful-better-auth'
 import { Auth } from './auth.js'
 
 const handle = HttpEffect.toWebHandler(
-  toHttpEffect(Auth.Tag).pipe(Effect.provide(Auth.layer))
+	toHttpEffect(Auth.Tag).pipe(Effect.provide(Auth.layer))
 )
 
 export const ServerRoute = { GET: handle, POST: handle }
@@ -155,50 +155,55 @@ Transport failures surface as `BetterAuthApiError`, untouched. The middleware ne
 
 ```ts
 import { Effect, Layer, Option, Schema } from 'effect'
-import { HttpApi, HttpApiBuilder, HttpApiEndpoint, HttpApiGroup } from 'effect/unstable/httpapi'
+import {
+	HttpApi,
+	HttpApiBuilder,
+	HttpApiEndpoint,
+	HttpApiGroup
+} from 'effect/unstable/httpapi'
 import { sessionMiddleware } from 'effectful-better-auth'
 import { Auth } from './auth.js'
 
 export const AuthSession = sessionMiddleware('app/AuthSession', Auth.Tag)
 
 const api = HttpApi.make('app')
-  .add(
-    HttpApiGroup.make('account')
-      .add(HttpApiEndpoint.get('me', '/me', { success: Schema.String }))
-      .middleware(AuthSession.CurrentSession)
-  )
-  .add(
-    HttpApiGroup.make('pages')
-      .add(HttpApiEndpoint.get('home', '/home', { success: Schema.String }))
-      .middleware(AuthSession.CurrentSessionOption)
-  )
+	.add(
+		HttpApiGroup.make('account')
+			.add(HttpApiEndpoint.get('me', '/me', { success: Schema.String }))
+			.middleware(AuthSession.CurrentSession)
+	)
+	.add(
+		HttpApiGroup.make('pages')
+			.add(HttpApiEndpoint.get('home', '/home', { success: Schema.String }))
+			.middleware(AuthSession.CurrentSessionOption)
+	)
 
 const accountLive = HttpApiBuilder.group(api, 'account', (handlers) =>
-  handlers.handle('me', () =>
-    Effect.gen(function* () {
-      const session = yield* AuthSession.Session // typed, from $Infer
-      return session.user.email
-    })
-  )
+	handlers.handle('me', () =>
+		Effect.gen(function* () {
+			const session = yield* AuthSession.Session // typed, from $Infer
+			return session.user.email
+		})
+	)
 )
 
 const pagesLive = HttpApiBuilder.group(api, 'pages', (handlers) =>
-  handlers.handle('home', () =>
-    Effect.gen(function* () {
-      const session = yield* AuthSession.SessionOption
-      return Option.match(session, {
-        onNone: () => 'hello, stranger',
-        onSome: (s) => `hello, ${s.user.name}`
-      })
-    })
-  )
+	handlers.handle('home', () =>
+		Effect.gen(function* () {
+			const session = yield* AuthSession.SessionOption
+			return Option.match(session, {
+				onNone: () => 'hello, stranger',
+				onSome: (s) => `hello, ${s.user.name}`
+			})
+		})
+	)
 )
 
 export const apiLive = HttpApiBuilder.layer(api).pipe(
-  Layer.provide(accountLive),
-  Layer.provide(pagesLive),
-  Layer.provide(AuthSession.layer),
-  Layer.provide(Auth.layer)
+	Layer.provide(accountLive),
+	Layer.provide(pagesLive),
+	Layer.provide(AuthSession.layer),
+	Layer.provide(Auth.layer)
 )
 ```
 
@@ -211,10 +216,10 @@ import { FileSystem, Layer, Path } from 'effect'
 import { Etag, HttpPlatform } from 'effect/unstable/http'
 
 export const PlatformLive = Layer.mergeAll(
-  Path.layer,
-  Etag.layer,
-  FileSystem.layerNoop({}),
-  HttpPlatform.layer.pipe(Layer.provide(FileSystem.layerNoop({})))
+	Path.layer,
+	Etag.layer,
+	FileSystem.layerNoop({}),
+	HttpPlatform.layer.pipe(Layer.provide(FileSystem.layerNoop({})))
 )
 ```
 
