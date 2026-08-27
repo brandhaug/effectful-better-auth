@@ -64,7 +64,7 @@
 		"nanoid@<3.3.18": "3.3.18"
 	},
 	"lint-staged": {
-		"*.{ts,tsx,js,jsx,json,md,yml,yaml}": [
+		"*.{ts,tsx,js,jsx,json,yml,yaml}": [
 			"oxfmt --write"
 		],
 		"*.{ts,tsx,js,jsx}": [
