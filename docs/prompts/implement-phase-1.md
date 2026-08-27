@@ -21,7 +21,7 @@ Implement **phase 1** of `effectful-better-auth` — the plugin-aware service/La
 
 - `package.json` — name `effectful-better-auth`, ESM-only (`"type": "module"`, `exports` map with `types`), MIT license, `peerDependencies`: `effect` (v4 beta range) and `better-auth` (`^1.6.0`). Zero `dependencies`. Bun is the package manager.
 - `src/` modules (suggested split — adjust if a cleaner shape emerges, but keep the public surface exactly as SPEC.md defines):
-     - `errors.ts` — `BetterAuthApiError` via `Schema.TaggedError`, fields per SPEC §3 (`statusCode: number`, `code: string | undefined`, `message: string`, `headers`).
+  - `errors.ts` — `BetterAuthApiError` via `Schema.TaggedError`, fields per SPEC §3 (`statusCode: number`, `code: string | undefined`, `message: string`, `headers`).
   - `effect-api.ts` — `EffectApi<Api>` mapped type + `effectApi(api)` runtime `Proxy`. `isAPIError` → `Effect.fail(BetterAuthApiError)`, anything else → `Effect.die`.
   - `factory.ts` — `make(options)` primitive and `service(id, options)` returning `{ Tag, layer }` with service shape `{ api, instance }`. Both accept a plain options object **or** an effectful options builder `Effect<O, E, R>` whose requirements flow into the layer's `R` (SPEC §6).
   - `types.ts` — the mandatory named helper types (`Instance<O>`, `Api<O>`, `Service<O>`, …) so consumer re-exports don't inline half a megabyte of declarations (SPEC §2).

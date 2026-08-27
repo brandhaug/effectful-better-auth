@@ -20,16 +20,16 @@ import { type Api, type Service, type Tag } from './types.js'
  * `ManagedRuntime.make(Auth.layer)` from the `service(...)` factory.
  */
 export const runAuth = <O extends BetterAuthOptions, A, E>(options: {
-  readonly tag: Tag<O>
-  readonly runtime: ManagedRuntime.ManagedRuntime<Service<O>, unknown>
-  readonly headers?: Headers | undefined
-  readonly build: (
-    api: Api<O>,
-    headers: Headers | undefined
-  ) => Effect.Effect<A, E>
+	readonly tag: Tag<O>
+	readonly runtime: ManagedRuntime.ManagedRuntime<Service<O>, unknown>
+	readonly headers?: Headers | undefined
+	readonly build: (
+		api: Api<O>,
+		headers: Headers | undefined
+	) => Effect.Effect<A, E>
 }): Promise<A> =>
-  options.runtime.runPromise(
-    Effect.flatMap(options.tag, ({ api }) =>
-      options.build(api, options.headers)
-    )
-  )
+	options.runtime.runPromise(
+		Effect.flatMap(options.tag, ({ api }) =>
+			options.build(api, options.headers)
+		)
+	)

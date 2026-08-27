@@ -1,7 +1,7 @@
 import { Schema } from 'effect'
 
 const HeadersInitSchema = Schema.declare(
-  (u): u is HeadersInit => typeof u === 'object' && u !== null
+	(u): u is HeadersInit => typeof u === 'object' && u !== null
 )
 
 /**
@@ -15,13 +15,13 @@ const HeadersInitSchema = Schema.declare(
  * (tests, mocks) need not fabricate one.
  */
 export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
-  'BetterAuthApiError'
+	'BetterAuthApiError'
 )('BetterAuthApiError', {
-  statusCode: Schema.Number,
-  code: Schema.UndefinedOr(Schema.String),
-  message: Schema.String,
-  headers: HeadersInitSchema,
-  cause: Schema.optional(Schema.Defect())
+	statusCode: Schema.Number,
+	code: Schema.UndefinedOr(Schema.String),
+	message: Schema.String,
+	headers: HeadersInitSchema,
+	cause: Schema.optional(Schema.Defect())
 }) {}
 
 /**
@@ -30,5 +30,5 @@ export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
  * middleware owns this error. Rendered as 401 on HttpApi contracts.
  */
 export class Unauthorized extends Schema.TaggedError<Unauthorized>(
-  'Unauthorized'
+	'Unauthorized'
 )('Unauthorized', {}, { httpApiStatus: 401 }) {}

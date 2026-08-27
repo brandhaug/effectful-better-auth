@@ -10,7 +10,7 @@ import { type EffectApi } from './effect-api.js'
 
 /** The instance type Better Auth infers from a concrete options object. */
 export type Instance<O extends BetterAuthOptions> = ReturnType<
-  typeof betterAuth<O>
+	typeof betterAuth<O>
 >
 
 /**
@@ -20,28 +20,28 @@ export type Instance<O extends BetterAuthOptions> = ReturnType<
  * `$Infer.Session`, so the endpoint is the accurate source.
  */
 export type Session<O extends BetterAuthOptions> = Instance<O>['api'] extends {
-  getSession: (...args: never[]) => Promise<infer R>
+	getSession: (...args: never[]) => Promise<infer R>
 }
-  ? NonNullable<R>
-  : Instance<O>['$Infer']['Session']
+	? NonNullable<R>
+	: Instance<O>['$Infer']['Session']
 
 /** The effectful `api` surface of an instance built from options `O`. */
 export type Api<O extends BetterAuthOptions> = EffectApi<Instance<O>['api']>
 
 /** The service shape provided by the factory's layer. */
 export type Service<O extends BetterAuthOptions> = {
-  readonly api: Api<O>
-  readonly instance: Instance<O>
+	readonly api: Api<O>
+	readonly instance: Instance<O>
 }
 
 /** The context key minted by `service(id, options)`. */
 export type Tag<O extends BetterAuthOptions> = Context.Service<
-  Service<O>,
-  Service<O>
+	Service<O>,
+	Service<O>
 >
 
 /** The `{ Tag, layer }` pair returned by `service(id, options)`. */
 export type ServiceResult<O extends BetterAuthOptions, E = never, R = never> = {
-  readonly Tag: Tag<O>
-  readonly layer: Layer.Layer<Service<O>, E, R>
+	readonly Tag: Tag<O>
+	readonly layer: Layer.Layer<Service<O>, E, R>
 }

@@ -1,83 +1,88 @@
 {
-  "name": "effectful-better-auth",
-  "version": "0.3.0",
-  "description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
-  "license": "MIT",
-  "type": "module",
-  "sideEffects": false,
-  "packageManager": "bun@1.4.0",
-  "engines": {
-    "bun": ">=1.4.0"
-  },
-  "workspaces": [],
-  "keywords": [
-    "effect",
-    "better-auth",
-    "authentication",
-    "auth",
-    "typescript",
-    "session"
-  ],
-  "homepage": "https://github.com/brandhaug/effectful-better-auth#readme",
-  "bugs": {
-    "url": "https://github.com/brandhaug/effectful-better-auth/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/brandhaug/effectful-better-auth.git"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "prepare": "husky",
-    "lint": "oxlint --type-aware",
-    "lint:fix": "oxlint --type-aware --fix",
-    "typecheck": "tsc --noEmit",
-    "test": "bun test",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint-staged": "lint-staged",
-    "build": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "bun run typecheck && bun run test && bun run build"
-  },
-  "lint-staged": {
-    "*.{ts,js,json,yml,yaml}": "prettier --write"
-  },
-  "catalog": {
-    "@types/node": "24",
-    "better-auth": "1.7.1",
-    "effect": "4.0.0-rc.111",
-    "husky": "9.1.7",
-    "lint-staged": "17.3.0",
-    "prettier": "3.9.6",
-    "typescript": "7.0.2"
-  },
-  "peerDependencies": {
-    "better-auth": "^1.6.0",
-    "effect": "^4.0.0-rc.111"
-  },
-  "devDependencies": {
-    "@types/bun": "1.4.0",
-    "@types/node": "catalog:",
-    "better-auth": "catalog:",
-    "effect": "catalog:",
-    "husky": "catalog:",
-    "lint-staged": "catalog:",
-    "oxlint": "1.79.0",
-    "oxlint-plugin-effect": "0.11.0",
-    "oxlint-tsgolint": "7.0.2001",
-    "prettier": "catalog:",
-    "typescript": "catalog:",
-    "ultracite": "7.10.6"
-  },
-  "overrides": {
-    "nanoid@<3.3.18": "3.3.18"
-  }
+	"name": "effectful-better-auth",
+	"version": "0.3.0",
+	"description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
+	"keywords": [
+		"auth",
+		"authentication",
+		"better-auth",
+		"effect",
+		"session",
+		"typescript"
+	],
+	"homepage": "https://github.com/brandhaug/effectful-better-auth#readme",
+	"bugs": {
+		"url": "https://github.com/brandhaug/effectful-better-auth/issues"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/brandhaug/effectful-better-auth.git"
+	},
+	"workspaces": [],
+	"files": [
+		"dist"
+	],
+	"type": "module",
+	"sideEffects": false,
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"prepare": "husky",
+		"lint": "oxlint --type-aware",
+		"lint:fix": "oxlint --type-aware --fix",
+		"typecheck": "tsc --noEmit",
+		"test": "bun test",
+		"format": "oxfmt --write",
+		"format:check": "oxfmt --check",
+		"lint-staged": "lint-staged",
+		"build": "tsc -p tsconfig.build.json",
+		"prepublishOnly": "bun run typecheck && bun run test && bun run build"
+	},
+	"devDependencies": {
+		"@types/bun": "1.4.0",
+		"@types/node": "catalog:",
+		"better-auth": "catalog:",
+		"effect": "catalog:",
+		"husky": "catalog:",
+		"lint-staged": "catalog:",
+		"oxfmt": "catalog:",
+		"oxlint": "1.79.0",
+		"oxlint-plugin-effect": "0.11.0",
+		"oxlint-tsgolint": "7.0.2001",
+		"typescript": "catalog:",
+		"ultracite": "7.10.6"
+	},
+	"peerDependencies": {
+		"better-auth": "^1.6.0",
+		"effect": "^4.0.0-rc.111"
+	},
+	"overrides": {
+		"nanoid@<3.3.18": "3.3.18"
+	},
+	"lint-staged": {
+		"*.{ts,tsx,js,jsx,json,md,yml,yaml}": [
+			"oxfmt --write"
+		],
+		"*.{ts,tsx,js,jsx}": [
+			"oxlint --type-aware --fix"
+		]
+	},
+	"engines": {
+		"bun": ">=1.4.0"
+	},
+	"packageManager": "bun@1.4.0",
+	"catalog": {
+		"@types/node": "24",
+		"better-auth": "1.7.1",
+		"effect": "4.0.0-rc.111",
+		"husky": "9.1.7",
+		"lint-staged": "17.3.0",
+		"oxfmt": "0.64.0",
+		"typescript": "7.0.2"
+	}
 }

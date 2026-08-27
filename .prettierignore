@@ -1,6 +1,0 @@
-dist/
-node_modules/
-bun.lock
-*.md
-prototype-typing/.dts-probe/
-test/declaration-probe/.dts-probe/
