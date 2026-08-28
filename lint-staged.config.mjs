@@ -5,11 +5,15 @@ const isGeneratedProbe = (file) => file.startsWith('prototype-typing/')
 
 export default {
 	'*.{ts,tsx,js,jsx,json,yml,yaml}': (files) => {
-		if (files.every(isGeneratedProbe)) return []
+		if (files.every(isGeneratedProbe)) {
+			return []
+		}
 		return ['oxfmt --write']
 	},
 	'*.{ts,tsx,js,jsx}': (files) => {
-		if (files.every(isGeneratedProbe)) return []
+		if (files.every(isGeneratedProbe)) {
+			return []
+		}
 		return ['oxlint --type-aware --fix']
 	}
 }

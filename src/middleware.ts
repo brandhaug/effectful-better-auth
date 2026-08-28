@@ -183,9 +183,9 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
 	// which is what the middleware body must fail with. Only the factory needs it, so it
 	// is local. Indexing the resolved conditional (not the bare parameter) mirrors how
 	// `HttpApiMiddleware` itself derives `ErrorSchemaFromConstraint<E>["Type"]`.
-	type MiddlewareErrorSchema<E extends Schema.Top | readonly Schema.Top[]> =
-		E extends readonly Schema.Top[] ? E[number] : E
-	type MiddlewareError<E extends Schema.Top | readonly Schema.Top[]> =
+	type MiddlewareErrorSchema<E extends Schema.Top | ReadonlyArray<Schema.Top>> =
+		E extends ReadonlyArray<Schema.Top> ? E[number] : E
+	type MiddlewareError<E extends Schema.Top | ReadonlyArray<Schema.Top>> =
 		MiddlewareErrorSchema<E>['Type']
 
 	// The shared shape of both variants: read the session through `GetSession`, map
@@ -193,7 +193,7 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
 	// and hand the continuation the value under the variant's context key. The error
 	// constraint's decoded type is what the transform may fail with — enforced here.
 	const buildVariant =
-		<P, E extends Schema.Top | readonly Schema.Top[]>(params: {
+		<P, E extends Schema.Top | ReadonlyArray<Schema.Top>>(params: {
 			readonly auth: Service<O>
 			readonly serviceTag: Context.Service<P, P>
 			readonly transform: (

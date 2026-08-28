@@ -25,7 +25,9 @@ type RelaxHeaders<C> =
  */
 export type EffectApi<Api> = {
 	readonly [
-		K in keyof Api as Api[K] extends (...args: never[]) => Promise<infer _R>
+		K in keyof Api as Api[K] extends (
+			...args: Array<never>
+		) => Promise<infer _R>
 			? K
 			: never
 	]: Api[K] extends (...args: infer P) => Promise<infer R>
@@ -42,14 +44,16 @@ export type EffectApi<Api> = {
  * headers.
  */
 const injectAmbientHeaders = (
-	args: readonly unknown[],
+	args: ReadonlyArray<unknown>,
 	headers: Headers
 ): ReadonlyArray<unknown> => {
 	const [input] = args
 	if (input === undefined || input === null) {
 		return [{ headers }, ...args.slice(1)]
 	}
-	if (typeof input !== 'object' || 'headers' in input) return args
+	if (typeof input !== 'object' || 'headers' in input) {
+		return args
+	}
 	return [{ ...input, headers }, ...args.slice(1)]
 }
 
@@ -64,10 +68,12 @@ const injectAmbientHeaders = (
 const toEffect = (
 	endpoint: unknown
 ):
-	| ((...args: unknown[]) => Effect.Effect<unknown, BetterAuthApiError>)
+	| ((...args: Array<unknown>) => Effect.Effect<unknown, BetterAuthApiError>)
 	| undefined => {
-	if (typeof endpoint !== 'function') return
-	return (...args: unknown[]) =>
+	if (typeof endpoint !== 'function') {
+		return
+	}
+	return (...args: Array<unknown>) =>
 		Effect.flatMap(Effect.serviceOption(CurrentHeaders), (ambient) =>
 			Effect.tryPromise({
 				try: () => {
@@ -114,7 +120,9 @@ export const effectApi = <Api extends Record<string, unknown>>(
 	// oxlint-disable-next-line effect/noAs, effect/noKnownValueWidening, typescript/no-unsafe-type-assertion -- the proxy's mapped EffectApi surface is only expressible as a cast
 	new Proxy(api, {
 		get: (target, prop) => {
-			if (typeof prop !== 'string') return
+			if (typeof prop !== 'string') {
+				return
+			}
 			return toEffect(target[prop])
 		}
 	}) as EffectApi<Api>

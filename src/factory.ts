@@ -11,7 +11,9 @@ import {
 const resolveOptions = <O extends BetterAuthOptions, E, R>(
 	options: O | Effect.Effect<O, E, R>
 ): Effect.Effect<O, E, R> => {
-	if (Effect.isEffect(options)) return options
+	if (Effect.isEffect(options)) {
+		return options
+	}
 	return Effect.succeed(options)
 }
 

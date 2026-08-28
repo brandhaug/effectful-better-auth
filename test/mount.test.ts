@@ -81,7 +81,7 @@ const spiedService = async (
 ) => {
 	const Auth = service(id, options)
 	const instance = await Effect.runPromise(make(options))
-	const seen: string[] = []
+	const seen: Array<string> = []
 	const spied = {
 		...instance,
 		handler: (request: Request) => {
