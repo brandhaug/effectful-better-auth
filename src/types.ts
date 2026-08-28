@@ -20,7 +20,7 @@ export type Instance<O extends BetterAuthOptions> = ReturnType<
  * `$Infer.Session`, so the endpoint is the accurate source.
  */
 export type Session<O extends BetterAuthOptions> = Instance<O>['api'] extends {
-	getSession: (...args: never[]) => Promise<infer R>
+	getSession: (...args: Array<never>) => Promise<infer R>
 }
 	? NonNullable<R>
 	: Instance<O>['$Infer']['Session']

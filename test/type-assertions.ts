@@ -66,7 +66,9 @@ const t4 = Effect.gen(function* () {
 const t5 = Effect.gen(function* () {
 	const auth = yield* Auth.Tag
 	const session = yield* auth.api.getSession({ headers: new Headers() })
-	if (session === null) return 'anonymous'
+	if (session === null) {
+		return 'anonymous'
+	}
 	return session.user.id
 })
 type T5Success = Effect.Success<typeof t5>
