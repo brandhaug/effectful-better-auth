@@ -1,3 +1,6 @@
+// fallow-ignore-file unused-file
+// Not imported anywhere: compiled directly by test/declaration-probe/tsconfig.json,
+// which test/declaration-probe.test.ts runs `tsc` against.
 /**
  * TS4023/TS2742 probe (SPEC §2): a consumer module compiled with
  * declaration emit that re-exports a `service(...)` result. The named

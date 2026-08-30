@@ -10,12 +10,12 @@
 				"backend_family": "",
 				"completeness": "complete"
 			},
-			"totalIssues": 4,
-			"unusedFiles": 2,
+			"totalIssues": 0,
+			"unusedFiles": 0,
 			"unusedExports": 0,
 			"unusedTypes": 0,
 			"unusedDependencies": 0,
-			"unusedDevDependencies": 1,
+			"unusedDevDependencies": 0,
 			"unusedOptionalDependencies": 0,
 			"unusedEnumMembers": 0,
 			"unusedClassMembers": 0,
@@ -33,9 +33,14 @@
 			"policyViolations": 0
 		}
 	},
-	"rules": {
-		"unused-dependencies": "warn",
-		"unused-dependency-overrides": "warn",
-		"unused-files": "warn"
-	}
+	// ultracite is not invoked directly: .oxlintrc.json loads its vendored
+	// anti-slop oxlint plugin by node_modules path, so fallow cannot see the
+	// usage.
+	"ignoreDependencies": ["ultracite"],
+	// nanoid@<3.3.18 is a CVE-fix override (PR #14) targeting a purely
+	// transitive package; kept as defense-in-depth if a transitive nanoid
+	// reappears.
+	"ignoreDependencyOverrides": [
+		{ "package": "nanoid", "source": "package.json" }
+	]
 }
