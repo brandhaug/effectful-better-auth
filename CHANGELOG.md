@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.2](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v0.3.1...effectful-better-auth-v0.3.2) (2026-08-30)
+
+
+### Miscellaneous
+
+* **deps:** bump better-auth from 1.7.1 to 1.7.2 ([#42](https://github.com/brandhaug/effectful-better-auth/issues/42)) ([ee1da8a](https://github.com/brandhaug/effectful-better-auth/commit/ee1da8a14163501555dfcb03bfac38af2cc9d1b6))
+* **deps:** bump effect from 4.0.0-rc.111 to 4.0.0-rc.112 ([#39](https://github.com/brandhaug/effectful-better-auth/issues/39)) ([a3cbab4](https://github.com/brandhaug/effectful-better-auth/commit/a3cbab48e9567f774fe6a9a660ce7cc3367cea80))
+* **deps:** bump lint-staged from 17.3.0 to 17.4.1 ([#43](https://github.com/brandhaug/effectful-better-auth/issues/43)) ([64806fb](https://github.com/brandhaug/effectful-better-auth/commit/64806fb6c8055adc75cbb3e6ea0693f33f221016))
+* **deps:** bump oxfmt from 0.64.0 to 0.65.0 ([#40](https://github.com/brandhaug/effectful-better-auth/issues/40)) ([a41ce29](https://github.com/brandhaug/effectful-better-auth/commit/a41ce29f229372c9f6d8dab5510a5740b13bff6d))
+* enable strict oxlint rules and fix violations ([#37](https://github.com/brandhaug/effectful-better-auth/issues/37)) ([2fb0876](https://github.com/brandhaug/effectful-better-auth/commit/2fb0876f5bd7711d398b042ec9ac8d18458902fa))
+* remove dead code and unused dependencies surfaced by fallow ([#46](https://github.com/brandhaug/effectful-better-auth/issues/46)) ([1e6eb3f](https://github.com/brandhaug/effectful-better-auth/commit/1e6eb3f4143d1d691a531851f9929340816cb648))
+
 ## [0.3.1](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v0.3.0...effectful-better-auth-v0.3.1) (2026-08-27)
 
 
