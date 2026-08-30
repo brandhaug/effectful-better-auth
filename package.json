@@ -70,7 +70,7 @@
   "catalog": {
     "@types/node": "24",
     "better-auth": "1.7.1",
-    "effect": "4.0.0-rc.111",
+    "effect": "4.0.0-rc.112",
     "lint-staged": "17.3.0",
     "oxfmt": "0.65.0",
     "typescript": "7.0.2"
