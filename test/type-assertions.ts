@@ -1,3 +1,7 @@
+// fallow-ignore-file unused-file
+// Not imported anywhere: its type-level assertions are checked by
+// `bun run typecheck` (root tsconfig includes test/); the export keeps
+// unused-variable lints quiet.
 /**
  * Type-level assertions, checked by `bun run typecheck` (tsc --noEmit).
  * Ported from the validated prototype (prototype/typing-strategy branch).
