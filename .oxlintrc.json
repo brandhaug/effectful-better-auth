@@ -473,9 +473,9 @@
 		{
 			// Schema.TaggedError<X>(tag)(tag, fields) defines a class whose constructor is
 			// instantiated with `new` by callers; the factory call itself is not a throw, so the
-			// "always `new`" rule reads the Effect idiom as a bug. errors.ts is the only file
-			// with this shape.
-			"files": ["src/errors.ts"],
+			// "always `new`" rule reads the Effect idiom as a bug. errors.ts's tagged errors
+			// and test/callback.test.ts's `Boom` test double have this shape.
+			"files": ["src/errors.ts", "test/callback.test.ts"],
 			"rules": {
 				"unicorn/throw-new-error": "off"
 			}

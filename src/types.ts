@@ -1,6 +1,6 @@
 import { type betterAuth, type BetterAuthOptions } from 'better-auth'
 import { type Context, type Layer } from 'effect'
-import { type EffectApi } from './effect-api.js'
+import { type EffectApi, type FullApi } from './effect-api.js'
 
 /**
  * Named helper types (SPEC §2): consumers re-exporting a `service(...)`
@@ -28,9 +28,16 @@ export type Session<O extends BetterAuthOptions> = Instance<O>['api'] extends {
 /** The effectful `api` surface of an instance built from options `O`. */
 export type Api<O extends BetterAuthOptions> = EffectApi<Instance<O>['api']>
 
+/**
+ * The effectful `full` surface of an instance built from options `O`:
+ * every endpoint resolving with `{ headers, response }` (see `FullApi`).
+ */
+export type ApiFull<O extends BetterAuthOptions> = FullApi<Instance<O>['api']>
+
 /** The service shape provided by the factory's layer. */
 export type Service<O extends BetterAuthOptions> = {
 	readonly api: Api<O>
+	readonly full: ApiFull<O>
 	readonly instance: Instance<O>
 }
 

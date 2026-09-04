@@ -1,5 +1,7 @@
 import { type BetterAuthOptions } from 'better-auth'
-import { Effect, type ManagedRuntime } from 'effect'
+import { Effect, type ManagedRuntime, Option } from 'effect'
+import { CurrentHeaders } from './current-headers.js'
+import { MissingRequestHeaders } from './errors.js'
 import { type Api, type Service, type Tag } from './types.js'
 
 /**
@@ -13,8 +15,15 @@ import { type Api, type Service, type Tag } from './types.js'
  * `BetterAuthApiError` `statusCode`/`code` — never `message` (SPEC §3).
  * Defects reject with the defect, per the runtime's own teardown.
  *
- * `headers` is forwarded to `build`, which threads it into endpoint inputs
- * (`api.getSession({ headers })`) — Better Auth reads cookies from there.
+ * `build` receives the effectful `api` and nothing else: `headers` is
+ * provided as ambient `CurrentHeaders`, so `auth.api.*` calls inside
+ * `build` that omit `headers` pick the cookie jar up automatically — no
+ * per-call threading. Explicit per-call headers still win, and code needing
+ * the raw `Headers` closes over the value passed here.
+ *
+ * `requireHeaders: true` flips a missing `headers` into a typed
+ * `MissingRequestHeaders` rejection instead of letting the call proceed
+ * with an empty cookie jar.
  *
  * The runtime must provide the auth service, e.g.
  * `ManagedRuntime.make(Auth.layer)` from the `service(...)` factory.
@@ -23,13 +32,19 @@ export const runAuth = <O extends BetterAuthOptions, A, E>(options: {
 	readonly tag: Tag<O>
 	readonly runtime: ManagedRuntime.ManagedRuntime<Service<O>, unknown>
 	readonly headers?: Headers | undefined
-	readonly build: (
-		api: Api<O>,
-		headers: Headers | undefined
-	) => Effect.Effect<A, E>
-}): Promise<A> =>
-	options.runtime.runPromise(
-		Effect.flatMap(options.tag, ({ api }) =>
-			options.build(api, options.headers)
-		)
-	)
+	readonly requireHeaders?: boolean | undefined
+	readonly build: (api: Api<O>) => Effect.Effect<A, E>
+}): Promise<A> => {
+	if (options.requireHeaders === true && options.headers === undefined) {
+		return options.runtime.runPromise(Effect.fail(new MissingRequestHeaders()))
+	}
+	const built = Effect.flatMap(options.tag, ({ api }) => options.build(api))
+	// `headers` rides as ambient `CurrentHeaders` when present — one
+	// pipeline from tag to promise either way.
+	const withAmbient = Option.match(Option.fromNullishOr(options.headers), {
+		onNone: () => built,
+		onSome: (headers) =>
+			built.pipe(Effect.provideService(CurrentHeaders, headers))
+	})
+	return options.runtime.runPromise(withAmbient)
+}

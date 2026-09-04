@@ -1,6 +1,15 @@
-export { BetterAuthApiError, Unauthorized } from './errors.js'
+export {
+	BetterAuthApiError,
+	MissingRequestHeaders,
+	Unauthorized
+} from './errors.js'
 export { CurrentHeaders } from './current-headers.js'
-export { effectApi, type EffectApi } from './effect-api.js'
+export {
+	effectApi,
+	fullApi,
+	type EffectApi,
+	type FullApi
+} from './effect-api.js'
 export { make, service } from './factory.js'
 export { plugins } from './plugins.js'
 export {
@@ -18,10 +27,19 @@ export {
 	type SessionMiddlewareOptions,
 	type SessionOptionKey
 } from './middleware.js'
-export { route, toHttpEffect } from './mount.js'
+export { handleWebRequest, route, toHttpEffect } from './mount.js'
 export { runAuth } from './run-auth.js'
+export { toCallback } from './callback.js'
+export {
+	cookieHeader,
+	cookiePairs,
+	mergeCookiePairs,
+	signUpSession,
+	type SignUpSession
+} from './test-kit.js'
 export type {
 	Api,
+	ApiFull,
 	Instance,
 	Service,
 	ServiceResult,

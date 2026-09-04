@@ -25,6 +25,17 @@ export class BetterAuthApiError extends Schema.TaggedError<BetterAuthApiError>(
 }) {}
 
 /**
+ * Failure of `runAuth` when `requireHeaders: true` is set and no `headers`
+ * were supplied: the call sits at a request-scoped seam with no ambient
+ * `CurrentHeaders` to draw from. Better Auth would read the session off an
+ * empty cookie jar — usually not what the caller wants — so the requirement
+ * is explicit and typed.
+ */
+export class MissingRequestHeaders extends Schema.TaggedError<MissingRequestHeaders>(
+	'MissingRequestHeaders'
+)('MissingRequestHeaders', {}) {}
+
+/**
  * Failure of the required session middleware when `getSession` resolves
  * `null` (SPEC §5). Better Auth does not throw for missing sessions; the
  * middleware owns this error. Rendered as 401 on HttpApi contracts.
