@@ -11,11 +11,13 @@ import {
 import { describe, expect, it } from 'bun:test'
 import {
 	effectApi,
+	fullApi,
 	make,
 	route,
 	service,
 	sessionMiddleware,
-	type Api
+	type Api,
+	type ApiFull
 } from '../src/index.js'
 
 const freshDb = () => ({ user: [], session: [], account: [], verification: [] })
@@ -70,6 +72,8 @@ const makeApp = async (id: string, spy?: { throwOnGetSession?: boolean }) => {
 	const authLayer = Layer.succeed(Auth.Tag)({
 		// oxlint-disable-next-line effect/noAs, typescript/no-unsafe-type-assertion -- test double over the raw api endpoint map
 		api: effectApi(spiedApi) as Api<typeof options>,
+		// oxlint-disable-next-line effect/noAs, typescript/no-unsafe-type-assertion -- same test double, full surface
+		full: fullApi(spiedApi) as ApiFull<typeof options>,
 		instance
 	})
 

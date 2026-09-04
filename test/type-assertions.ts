@@ -138,14 +138,43 @@ type FnSession = Session<ReturnType<typeof makeOptionsInFn>>
 const t8RoleSurvivesFn: 'role' extends keyof FnSession['user'] ? true : never =
 	true
 
+// T9: the `full` surface keeps endpoint typing (plugin endpoints present,
+// absent without plugins) and resolves with `{ headers, response }`;
+// `returnHeaders: false` breaks the contract and must not compile.
+const t9 = Effect.gen(function* () {
+	const auth = yield* Auth.Tag
+	const { headers, response } = yield* auth.full.listUsers({
+		query: { limit: 10 }
+	})
+	// @ts-expect-error `returnHeaders: false` breaks the full result contract
+	yield* auth.full.listUsers({ query: { limit: 10 }, returnHeaders: false })
+	return { headers, response }
+})
+type T9Success = Effect.Success<typeof t9>
+const t9Headers: T9Success extends { readonly headers: Headers }
+	? true
+	: never = true
+const t9ErrorExact: [BetterAuthApiError] extends [Effect.Error<typeof t9>]
+	? true
+	: never = true
+const t9Bare = Effect.gen(function* () {
+	const auth = yield* Bare.Tag
+	// @ts-expect-error listUsers comes from the admin plugin
+	yield* auth.full.listUsers({ query: { limit: 10 } })
+})
+
 export const typeAssertions = {
 	t1,
 	t3,
 	t4,
 	t5,
+	t9,
+	t9Bare,
 	t1ErrorCovers,
 	t1ErrorExact,
 	t5Null,
+	t9Headers,
+	t9ErrorExact,
 	builtRequiresDep,
 	provided,
 	t7RoleExists,

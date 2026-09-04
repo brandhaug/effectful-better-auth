@@ -34,6 +34,27 @@ export const toHttpEffect = <O extends BetterAuthOptions>(
 	})
 
 /**
+ * Web-standard mount (SPEC §4): a plain `Request` in, `Response` out effect.
+ * Collapses the `fromWeb` → `toHttpEffect` → `toWeb` dance file-route
+ * frameworks (TanStack Start and friends) repeated at every mount site —
+ * including well-known paths (RFC 8414 discovery) that live outside the
+ * catchall base path. The effect still requires only the auth service, so
+ * it composes inside a larger request Effect (rate limiting, audit) or runs
+ * on a `ManagedRuntime`. Streaming bodies pass through untouched.
+ */
+export const handleWebRequest = <O extends BetterAuthOptions>(
+	tag: Tag<O>,
+	request: Request
+): Effect.Effect<Response, HttpServerError.RequestError, Service<O>> =>
+	toHttpEffect(tag).pipe(
+		Effect.provideService(
+			HttpServerRequest.HttpServerRequest,
+			HttpServerRequest.fromWeb(request)
+		),
+		Effect.map(HttpServerResponse.toWeb)
+	)
+
+/**
  * Convenience mount (SPEC §4): registers `'*' <basePath>/*` on the v4
  * singleton router. `basePath` derives from the instance's better-auth
  * options (`options.basePath ?? '/api/auth'`); an explicit override here is

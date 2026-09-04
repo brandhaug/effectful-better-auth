@@ -3,7 +3,12 @@ import { memoryAdapter } from 'better-auth/adapters/memory'
 import { username } from 'better-auth/plugins/username'
 import { Cause, Effect, Exit, Option } from 'effect'
 import { describe, expect, it } from 'bun:test'
-import { BetterAuthApiError, effectApi } from '../src/index.js'
+import {
+	BetterAuthApiError,
+	CurrentHeaders,
+	effectApi,
+	fullApi
+} from '../src/index.js'
 
 const makeAuth = () =>
 	betterAuth({
@@ -89,5 +94,74 @@ describe('effectApi', () => {
 			expect(Cause.hasFails(exit.cause)).toBe(false)
 			expect(Cause.hasDies(exit.cause)).toBe(true)
 		}
+	})
+})
+
+describe('fullApi', () => {
+	it('resolves with the response headers carrying the session cookie', async () => {
+		const auth = makeAuth()
+		const full = fullApi(auth.api)
+		const { headers, response } = await Effect.runPromise(
+			full.signUpEmail({
+				body: {
+					name: 'Demo',
+					email: 'demo@example.com',
+					password: 'password123',
+					username: 'demo'
+				}
+			})
+		)
+		expect(
+			headers
+				.getSetCookie()
+				.some((cookie) => cookie.startsWith('better-auth.session_token='))
+		).toBe(true)
+		expect(response.user.email).toBe('demo@example.com')
+	})
+
+	it('fails with the same BetterAuthApiError as the data-only proxy', async () => {
+		const auth = makeAuth()
+		const full = fullApi(auth.api)
+		const exit = await Effect.runPromiseExit(
+			full.signInEmail({
+				body: { email: 'nobody@example.com', password: 'wrong-password' }
+			})
+		)
+		expect(Exit.isFailure(exit)).toBe(true)
+		if (Exit.isFailure(exit)) {
+			const error = Option.getOrThrow(Cause.findErrorOption(exit.cause))
+			expect(error).toBeInstanceOf(BetterAuthApiError)
+			expect(error.statusCode).toBe(401)
+		}
+	})
+
+	it('injects ambient CurrentHeaders alongside returnHeaders', async () => {
+		const auth = makeAuth()
+		const full = fullApi(auth.api)
+		await Effect.runPromise(
+			full.signUpEmail({
+				body: {
+					name: 'Demo',
+					email: 'demo@example.com',
+					password: 'password123',
+					username: 'demo'
+				}
+			})
+		)
+		const signedIn = await Effect.runPromise(
+			full.signInEmail({
+				body: { email: 'demo@example.com', password: 'password123' }
+			})
+		)
+		const cookie = signedIn.headers
+			.getSetCookie()
+			.map((c) => c.split(';')[0])
+			.join('; ')
+		const session = await Effect.runPromise(
+			full
+				.getSession()
+				.pipe(Effect.provideService(CurrentHeaders, new Headers({ cookie })))
+		)
+		expect(session.response?.user.email).toBe('demo@example.com')
 	})
 })

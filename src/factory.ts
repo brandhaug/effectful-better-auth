@@ -1,6 +1,6 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth'
 import { Context, Effect, Layer } from 'effect'
-import { effectApi } from './effect-api.js'
+import { effectApi, fullApi } from './effect-api.js'
 import {
 	type Instance,
 	type Service,
@@ -41,13 +41,14 @@ const toService = <O extends BetterAuthOptions>(
 	instance: Instance<O>
 ): Service<O> => ({
 	api: effectApi(instance.api),
+	full: fullApi(instance.api),
 	instance
 })
 
 /**
  * Convenience factory (SPEC §2, the headline API): mints a context key and
- * a layer providing `{ api, instance }`. Multi-instance via distinct ids —
- * reusing an id makes the services collide in context (v4 gotcha).
+ * a layer providing `{ api, full, instance }`. Multi-instance via distinct
+ * ids — reusing an id makes the services collide in context (v4 gotcha).
  */
 export function service<O extends BetterAuthOptions, E, R>(
 	id: string,

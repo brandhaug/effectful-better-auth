@@ -2,7 +2,15 @@ import { memoryAdapter } from 'better-auth/adapters/memory'
 import { Effect, Layer } from 'effect'
 import { HttpEffect, HttpRouter } from 'effect/unstable/http'
 import { describe, expect, it } from 'bun:test'
-import { effectApi, make, route, service, toHttpEffect } from '../src/index.js'
+import {
+	effectApi,
+	fullApi,
+	handleWebRequest,
+	make,
+	route,
+	service,
+	toHttpEffect
+} from '../src/index.js'
 
 const freshDb = () => ({ user: [], session: [], account: [], verification: [] })
 
@@ -91,10 +99,52 @@ const spiedService = async (
 	}
 	const layer = Layer.succeed(Auth.Tag)({
 		api: effectApi(spied.api),
+		full: fullApi(spied.api),
 		instance: spied
 	})
 	return { Tag: Auth.Tag, layer, seen }
 }
+
+describe('handleWebRequest', () => {
+	it('answers a plain web Request with a plain web Response', async () => {
+		const Auth = service('mount/WebRequest', baseOptions())
+		const signUp = await Effect.runPromise(
+			handleWebRequest(Auth.Tag, signUpRequest('web@example.com')).pipe(
+				Effect.provide(Auth.layer)
+			)
+		)
+		expect(signUp.status).toBe(200)
+		expect(signUp.headers.get('set-cookie')).toMatch(
+			/better-auth\.session_token=/
+		)
+		const body: { user: { email: string } } = await signUp.json()
+		expect(body.user.email).toBe('web@example.com')
+	})
+
+	it('carries request cookies through to the session endpoint', async () => {
+		const Auth = service('mount/WebRequestSession', baseOptions())
+		const signUp = await Effect.runPromise(
+			handleWebRequest(Auth.Tag, signUpRequest('web2@example.com')).pipe(
+				Effect.provide(Auth.layer)
+			)
+		)
+		const cookie = signUp.headers
+			.getSetCookie()
+			.map((c) => c.split(';')[0])
+			.join('; ')
+		const session = await Effect.runPromise(
+			handleWebRequest(
+				Auth.Tag,
+				new Request('http://localhost:3000/api/auth/get-session', {
+					headers: { cookie }
+				})
+			).pipe(Effect.provide(Auth.layer))
+		)
+		expect(session.status).toBe(200)
+		const body: { user: { email: string } } = await session.json()
+		expect(body.user.email).toBe('web2@example.com')
+	})
+})
 
 describe('route', () => {
 	it('mounts at /api/auth when the instance options set no basePath', async () => {
