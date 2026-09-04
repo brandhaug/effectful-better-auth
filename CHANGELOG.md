@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v0.3.2...effectful-better-auth-v1.0.0) (2026-09-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* `runAuth`'s `build` now receives only the api — the `headers` parameter is cut as an echo of the caller's own value once ambient injection exists — and `Service` grows a required `full` member, provided by the factory.
+
+### Features
+
+* full surface, ambient runAuth, mount, callbacks, test kit ([#48](https://github.com/brandhaug/effectful-better-auth/issues/48)) ([cac01a8](https://github.com/brandhaug/effectful-better-auth/commit/cac01a81a200bea785bd9e5dee4b5461e1ae1beb))
+
 ## [0.3.2](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v0.3.1...effectful-better-auth-v0.3.2) (2026-08-30)
 
 
