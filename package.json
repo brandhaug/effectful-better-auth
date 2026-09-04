@@ -1,79 +1,79 @@
 {
-	"name": "effectful-better-auth",
-	"version": "1.0.0",
-	"description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
-	"keywords": [
-		"auth",
-		"authentication",
-		"better-auth",
-		"effect",
-		"session",
-		"typescript"
-	],
-	"homepage": "https://github.com/brandhaug/effectful-better-auth#readme",
-	"bugs": {
-		"url": "https://github.com/brandhaug/effectful-better-auth/issues"
-	},
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/brandhaug/effectful-better-auth.git"
-	},
-	"workspaces": [],
-	"files": [
-		"dist"
-	],
-	"type": "module",
-	"sideEffects": false,
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		}
-	},
-	"scripts": {
-		"prepare": "git config core.hooksPath .githooks",
-		"lint": "oxlint --type-aware",
-		"lint:fix": "oxlint --type-aware --fix",
-		"typecheck": "tsc --noEmit",
-		"test": "bun test",
-		"format": "oxfmt --write",
-		"format:check": "oxfmt --check",
-		"dead-code": "fallow dead-code --fail-on-regression",
-		"lint-staged": "lint-staged",
-		"build": "tsc -p tsconfig.build.json",
-		"prepublishOnly": "bun run typecheck && bun run test && bun run build"
-	},
-	"devDependencies": {
-		"@types/bun": "1.4.0",
-		"@types/node": "catalog:",
-		"better-auth": "catalog:",
-		"effect": "catalog:",
-		"lint-staged": "catalog:",
-		"oxfmt": "catalog:",
-		"oxlint": "1.79.0",
-		"oxlint-plugin-effect": "0.11.0",
-		"oxlint-tsgolint": "7.0.2001",
-		"typescript": "catalog:",
-		"ultracite": "7.10.6"
-	},
-	"peerDependencies": {
-		"better-auth": "^1.6.0",
-		"effect": "^4.0.0-rc.111"
-	},
-	"overrides": {
-		"nanoid@<3.3.18": "3.3.18"
-	},
-	"engines": {
-		"bun": ">=1.4.0"
-	},
-	"packageManager": "bun@1.4.0",
-	"catalog": {
-		"@types/node": "24",
-		"better-auth": "1.7.2",
-		"effect": "4.0.0-rc.112",
-		"lint-staged": "17.4.1",
-		"oxfmt": "0.65.0",
-		"typescript": "7.0.2"
-	}
+  "name": "effectful-better-auth",
+  "version": "1.0.0",
+  "description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
+  "keywords": [
+    "auth",
+    "authentication",
+    "better-auth",
+    "effect",
+    "session",
+    "typescript"
+  ],
+  "homepage": "https://github.com/brandhaug/effectful-better-auth#readme",
+  "bugs": {
+    "url": "https://github.com/brandhaug/effectful-better-auth/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandhaug/effectful-better-auth.git"
+  },
+  "workspaces": [],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "oxlint --type-aware --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "format": "oxfmt --write",
+    "format:check": "oxfmt --check",
+    "dead-code": "fallow dead-code --fail-on-regression",
+    "lint-staged": "lint-staged",
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "bun run typecheck && bun run test && bun run build"
+  },
+  "devDependencies": {
+    "@types/bun": "1.4.0",
+    "@types/node": "catalog:",
+    "better-auth": "catalog:",
+    "effect": "catalog:",
+    "lint-staged": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "1.79.0",
+    "oxlint-plugin-effect": "0.11.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "typescript": "catalog:",
+    "ultracite": "7.10.6"
+  },
+  "peerDependencies": {
+    "better-auth": "^1.6.0",
+    "effect": "^4.0.0-rc.111"
+  },
+  "overrides": {
+    "nanoid@<3.3.18": "3.3.18"
+  },
+  "engines": {
+    "bun": ">=1.4.0"
+  },
+  "packageManager": "bun@1.4.0",
+  "catalog": {
+    "@types/node": "24",
+    "better-auth": "1.7.2",
+    "effect": "4.0.0-rc.112",
+    "lint-staged": "17.4.1",
+    "oxfmt": "0.66.0",
+    "typescript": "7.0.2"
+  }
 }
