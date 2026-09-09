@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.1...effectful-better-auth-v1.0.2) (2026-09-09)
+
+
+### Miscellaneous
+
+* **deps:** bump better-auth from 1.7.2 to 1.7.3 ([#55](https://github.com/brandhaug/effectful-better-auth/issues/55)) ([fad89b7](https://github.com/brandhaug/effectful-better-auth/commit/fad89b70311d75da0bda24e40f90317d194083ee))
+* **deps:** bump lint-staged from 17.4.1 to 17.5.0 ([#53](https://github.com/brandhaug/effectful-better-auth/issues/53)) ([7e1430c](https://github.com/brandhaug/effectful-better-auth/commit/7e1430c0c9713cbc27a5bab12f1754a8f70c243f))
+
 ## [1.0.1](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.0...effectful-better-auth-v1.0.1) (2026-09-05)
 
 
