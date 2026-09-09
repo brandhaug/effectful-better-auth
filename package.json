@@ -70,7 +70,7 @@
   "packageManager": "bun@1.4.2",
   "catalog": {
     "@types/node": "24",
-    "better-auth": "1.7.2",
+    "better-auth": "1.7.3",
     "effect": "4.0.0-rc.112",
     "lint-staged": "17.5.0",
     "oxfmt": "0.66.0",
