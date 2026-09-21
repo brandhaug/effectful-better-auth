@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.3](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.2...effectful-better-auth-v1.0.3) (2026-09-18)
+
+
+### Miscellaneous
+
+* **deps:** bump better-auth from 1.7.4 to 1.7.5 ([#62](https://github.com/brandhaug/effectful-better-auth/issues/62)) ([c13ea54](https://github.com/brandhaug/effectful-better-auth/commit/c13ea543c8cdc194386c75f936ce190b90d6537a))
+* **deps:** bump better-auth to 1.7.4 ([#59](https://github.com/brandhaug/effectful-better-auth/issues/59)) ([36d8900](https://github.com/brandhaug/effectful-better-auth/commit/36d8900b987897b38e525665babd5ba7480fd95b))
+* **deps:** bump effect from 4.0.0-rc.112 to 4.0.0-rc.113 ([#58](https://github.com/brandhaug/effectful-better-auth/issues/58)) ([4db0ea1](https://github.com/brandhaug/effectful-better-auth/commit/4db0ea18620f221442b24144ea7a41ffa6ac3f84))
+* **deps:** bump effect from 4.0.0-rc.113 to 4.0.0-rc.115 ([#61](https://github.com/brandhaug/effectful-better-auth/issues/61)) ([fe3e27e](https://github.com/brandhaug/effectful-better-auth/commit/fe3e27e8332d8b81dd8967d9bc7adf715ab9d17a))
+* **deps:** bump lint-staged from 17.5.0 to 17.5.1 ([#60](https://github.com/brandhaug/effectful-better-auth/issues/60)) ([85dec39](https://github.com/brandhaug/effectful-better-auth/commit/85dec390cf43cd67a251360d82e895df34d255ad))
+* **deps:** bump oxfmt from 0.66.0 to 0.67.0 ([#56](https://github.com/brandhaug/effectful-better-auth/issues/56)) ([fe559ae](https://github.com/brandhaug/effectful-better-auth/commit/fe559ae15bc4e4779aecedaaa2846532fef997f3))
+* **deps:** bump oxfmt from 0.67.0 to 0.68.0 ([#63](https://github.com/brandhaug/effectful-better-auth/issues/63)) ([ae541c8](https://github.com/brandhaug/effectful-better-auth/commit/ae541c851f413e230a5d91b05034215debffa060))
+
 ## [1.0.2](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.1...effectful-better-auth-v1.0.2) (2026-09-09)
 
 
