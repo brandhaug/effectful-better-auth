@@ -1,13 +1,13 @@
 import { APIError } from 'better-auth/api'
 import { memoryAdapter } from 'better-auth/adapters/memory'
 import { Effect, FileSystem, Layer, Option, Path, Schema } from 'effect'
-import { Etag, HttpPlatform, HttpRouter } from 'effect/unstable/http'
+import { Etag, HttpPlatform, HttpRouter } from 'effect/http'
 import {
 	HttpApi,
 	HttpApiBuilder,
 	HttpApiEndpoint,
 	HttpApiGroup
-} from 'effect/unstable/httpapi'
+} from 'effect/http-api'
 import { describe, expect, it } from 'bun:test'
 import {
 	effectApi,

@@ -5,7 +5,7 @@ import {
 	type HttpServerError,
 	HttpServerRequest,
 	HttpServerResponse
-} from 'effect/unstable/http'
+} from 'effect/http'
 import { type Service, type Tag } from './types.js'
 
 /**

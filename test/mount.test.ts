@@ -1,6 +1,6 @@
 import { memoryAdapter } from 'better-auth/adapters/memory'
 import { Effect, Layer } from 'effect'
-import { HttpEffect, HttpRouter } from 'effect/unstable/http'
+import { HttpEffect, HttpRouter } from 'effect/http'
 import { describe, expect, it } from 'bun:test'
 import {
 	effectApi,

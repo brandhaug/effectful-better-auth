@@ -1,7 +1,7 @@
 import { type BetterAuthOptions } from 'better-auth'
 import { Context, Effect, Layer, Option, type Schema } from 'effect'
-import { HttpServerRequest } from 'effect/unstable/http'
-import { HttpApiMiddleware } from 'effect/unstable/httpapi'
+import { HttpServerRequest } from 'effect/http'
+import { HttpApiMiddleware } from 'effect/http-api'
 import { BetterAuthApiError, Unauthorized } from './errors.js'
 import { type Service, type Session, type Tag } from './types.js'
 
@@ -40,13 +40,13 @@ export type CurrentSessionOptionFn<O extends BetterAuthOptions> =
 
 /**
  * The identifier of the required middleware service. The literal
- * `'~effect/httpapi/HttpApiMiddleware'` property mirrors the metadata the
+ * `'~effect/http-api/HttpApiMiddleware'` property mirrors the metadata the
  * class-declared form would carry; it is what lets `HttpApi` contracts
  * accept a factory-minted key in `.middleware(...)`.
  */
 export type CurrentSessionId<O extends BetterAuthOptions> =
 	Context.ServiceClass.Shape<string, CurrentSessionFn<O>> & {
-		readonly '~effect/httpapi/HttpApiMiddleware': {
+		readonly '~effect/http-api/HttpApiMiddleware': {
 			readonly provides: Session<O>
 			readonly requires: never
 			readonly error: CurrentSessionErrors
@@ -58,7 +58,7 @@ export type CurrentSessionId<O extends BetterAuthOptions> =
 /** The identifier of the optional middleware service. */
 export type CurrentSessionOptionId<O extends BetterAuthOptions> =
 	Context.ServiceClass.Shape<string, CurrentSessionOptionFn<O>> & {
-		readonly '~effect/httpapi/HttpApiMiddleware': {
+		readonly '~effect/http-api/HttpApiMiddleware': {
 			readonly provides: Option.Option<Session<O>>
 			readonly requires: never
 			readonly error: CurrentSessionOptionErrors
@@ -144,7 +144,7 @@ export const sessionMiddleware = <O extends BetterAuthOptions>(
 		Option.Option<Session<O>>
 	>(`${id}/SessionOption`)
 	// SAFETY: `HttpApiMiddleware.Service` infers `provides: never` from the middleware
-	// function shape, not from the `~effect/httpapi/HttpApiMiddleware` metadata that
+	// function shape, not from the `~effect/http-api/HttpApiMiddleware` metadata that
 	// carries the real `provides`/`error` contract. The declared keys below are that
 	// metadata made explicit for `HttpApi` contracts; bridging the two is the factory's
 	// boundary.

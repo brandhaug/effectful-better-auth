@@ -12,7 +12,7 @@ bun add effectful-better-auth
 # or: npm install / pnpm add / yarn add
 ```
 
-Requires `better-auth ^1.6.0` and `effect ^4.0.0-rc.111` as peer dependencies.
+Requires `better-auth ^1.6.0` and `effect ^4.0.0` as peer dependencies.
 
 ## Quickstart
 
@@ -165,7 +165,7 @@ The runtime is whatever the callbacks need. It must not be the auth instance's o
 
 ```ts
 import { Layer } from 'effect'
-import { HttpRouter } from 'effect/unstable/http'
+import { HttpRouter } from 'effect/http'
 import { route } from 'effectful-better-auth'
 import { Auth } from './auth.js'
 
@@ -182,7 +182,7 @@ File-route frameworks (TanStack Start and friends) skip the router and materiali
 
 ```ts
 import { Effect } from 'effect'
-import { HttpEffect } from 'effect/unstable/http'
+import { HttpEffect } from 'effect/http'
 import { toHttpEffect } from 'effectful-better-auth'
 import { Auth } from './auth.js'
 
@@ -223,7 +223,7 @@ import {
 	HttpApiBuilder,
 	HttpApiEndpoint,
 	HttpApiGroup
-} from 'effect/unstable/httpapi'
+} from 'effect/http-api'
 import { sessionMiddleware } from 'effectful-better-auth'
 import { Auth } from './auth.js'
 
@@ -276,7 +276,7 @@ To materialize `apiLive` with `HttpRouter.toWebHandler`, `HttpApiBuilder` still 
 
 ```ts
 import { FileSystem, Layer, Path } from 'effect'
-import { Etag, HttpPlatform } from 'effect/unstable/http'
+import { Etag, HttpPlatform } from 'effect/http'
 
 export const PlatformLive = Layer.mergeAll(
 	Path.layer,
