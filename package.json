@@ -73,7 +73,7 @@
 		"better-auth": "1.7.7",
 		"effect": "4.0.1",
 		"lint-staged": "17.6.0",
-		"oxfmt": "0.71.0",
+		"oxfmt": "0.72.0",
 		"typescript": "7.0.2"
 	}
 }
