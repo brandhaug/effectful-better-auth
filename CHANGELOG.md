@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.6](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.5...effectful-better-auth-v1.0.6) (2026-10-08)
+
+
+### Bug Fixes
+
+* **security:** override 1 vulnerable transitive dependency ([#75](https://github.com/brandhaug/effectful-better-auth/issues/75)) ([604ac68](https://github.com/brandhaug/effectful-better-auth/commit/604ac6868d6fe7ba5eebe3899bb7240fd4727a36))
+
+
+### Miscellaneous
+
+* **deps:** bump better-auth from 1.7.6 to 1.7.7 ([#73](https://github.com/brandhaug/effectful-better-auth/issues/73)) ([6669364](https://github.com/brandhaug/effectful-better-auth/commit/66693645855e87a9af429cf683b3a0e9a32248e6))
+* **deps:** bump effect from 4.0.0 to 4.0.1 ([#76](https://github.com/brandhaug/effectful-better-auth/issues/76)) ([1fb6c34](https://github.com/brandhaug/effectful-better-auth/commit/1fb6c34a2a5bbc9e9a4b30b9125c02d518da4092))
+* **deps:** bump oxfmt from 0.71.0 to 0.72.0 ([#77](https://github.com/brandhaug/effectful-better-auth/issues/77)) ([5170f3f](https://github.com/brandhaug/effectful-better-auth/commit/5170f3f7aa920c71732860c62341bbbd46e35b11))
+
 ## [1.0.5](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.4...effectful-better-auth-v1.0.5) (2026-10-01)
 
 
