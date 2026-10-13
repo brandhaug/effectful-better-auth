@@ -178,19 +178,29 @@ const routes = Layer.mergeAll(
 export const { handler, dispose } = HttpRouter.toWebHandler(routes)
 ```
 
-File-route frameworks (TanStack Start and friends) skip the router and materialize the primitive directly — `toHttpEffect(Tag)` is a plain v4 HTTP effect (`toWeb` the request → `auth.handler` → `fromWeb` the response, streaming bodies pass through untouched):
+File-route frameworks (TanStack Start and friends) skip the router and materialize the primitive directly — `toHttpEffect(Tag)` is a plain v4 HTTP effect (`toWeb` the request → `auth.handler` → `fromWeb` the response, streaming bodies pass through untouched).
+
+For TanStack Start, create `src/routes/api/auth/$.ts` using `createFileRoute` and `server.handlers`. This example imports the auth service from `src/auth.ts`:
 
 ```ts
+import { createFileRoute } from '@tanstack/react-router'
 import { Effect } from 'effect'
 import { HttpEffect } from 'effect/http'
 import { toHttpEffect } from 'effectful-better-auth'
-import { Auth } from './auth.js'
+import { Auth } from '../../../auth.js'
 
 const handle = HttpEffect.toWebHandler(
 	toHttpEffect(Auth.Tag).pipe(Effect.provide(Auth.layer))
 )
 
-export const ServerRoute = { GET: handle, POST: handle }
+export const Route = createFileRoute('/api/auth/$')({
+	server: {
+		handlers: {
+			GET: ({ request }) => handle(request),
+			POST: ({ request }) => handle(request)
+		}
+	}
+})
 ```
 
 When the handler already holds a plain web `Request` and wants a plain `Response` back — TanStack Start route handlers, RFC 8414 well-known paths mounted outside the catchall — `handleWebRequest(Tag, request)` collapses the `fromWeb`/`provideService`/`toWeb` plumbing:
