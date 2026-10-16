@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.6](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.5...effectful-better-auth-v1.0.6) (2026-10-16)
+
+
+### Bug Fixes
+
+* **security:** override 1 vulnerable transitive dependency ([#75](https://github.com/brandhaug/effectful-better-auth/issues/75)) ([604ac68](https://github.com/brandhaug/effectful-better-auth/commit/604ac6868d6fe7ba5eebe3899bb7240fd4727a36))
+
+
+### Documentation
+
+* **readme:** update TanStack Start auth route example ([#79](https://github.com/brandhaug/effectful-better-auth/issues/79)) ([d51a6d3](https://github.com/brandhaug/effectful-better-auth/commit/d51a6d323152f6d5063b62dc6ee3fc0604e67d86))
+
+
+### Miscellaneous
+
+* **deps:** bump better-auth from 1.7.6 to 1.7.7 ([#73](https://github.com/brandhaug/effectful-better-auth/issues/73)) ([6669364](https://github.com/brandhaug/effectful-better-auth/commit/66693645855e87a9af429cf683b3a0e9a32248e6))
+* **deps:** bump effect from 4.0.0 to 4.0.1 ([#76](https://github.com/brandhaug/effectful-better-auth/issues/76)) ([1fb6c34](https://github.com/brandhaug/effectful-better-auth/commit/1fb6c34a2a5bbc9e9a4b30b9125c02d518da4092))
+* **deps:** bump effect from 4.0.1 to 4.0.2 ([#78](https://github.com/brandhaug/effectful-better-auth/issues/78)) ([73af0c0](https://github.com/brandhaug/effectful-better-auth/commit/73af0c09dda3707286803d36a70b57e1437a3b55))
+* **deps:** bump effect from 4.0.2 to 4.0.3 ([#80](https://github.com/brandhaug/effectful-better-auth/issues/80)) ([e9dc0ad](https://github.com/brandhaug/effectful-better-auth/commit/e9dc0ad933ba2a0bc5fececaf9d8a9f457559ce6))
+* **deps:** bump effect from 4.0.3 to 4.0.4 ([#81](https://github.com/brandhaug/effectful-better-auth/issues/81)) ([699035b](https://github.com/brandhaug/effectful-better-auth/commit/699035bd1ddf254987515d28a636661d47342612))
+* **deps:** bump oxfmt from 0.71.0 to 0.72.0 ([#77](https://github.com/brandhaug/effectful-better-auth/issues/77)) ([5170f3f](https://github.com/brandhaug/effectful-better-auth/commit/5170f3f7aa920c71732860c62341bbbd46e35b11))
+* **deps:** bump oxfmt from 0.72.0 to 0.73.0 ([#82](https://github.com/brandhaug/effectful-better-auth/issues/82)) ([9b2a684](https://github.com/brandhaug/effectful-better-auth/commit/9b2a6842c577afe627f85674840b6b96d438a0bd))
+
 ## [1.0.5](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.4...effectful-better-auth-v1.0.5) (2026-10-01)
 
 
