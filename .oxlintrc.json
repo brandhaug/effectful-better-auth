@@ -3,11 +3,9 @@
 	"jsPlugins": [
 		"oxlint-plugin-effect/plugin",
 		{
-			// ultracite bundles the anti-slop plugin (upstream is copy-the-source, not
-			// published to npm). plugin.mjs is not in ultracite's exports map, so the
-			// specifier has to be a path.
+			// Bundle and license copied unchanged from ultracite 7.10.6.
 			"name": "anti-slop",
-			"specifier": "./node_modules/ultracite/config/oxlint/anti-slop/plugin.mjs"
+			"specifier": "./vendor/anti-slop/plugin.mjs"
 		}
 	],
 	"options": {
@@ -34,6 +32,7 @@
 		"builtin": true
 	},
 	"ignorePatterns": [
+		"vendor/**",
 		"node_modules/**",
 		"dist/**",
 		".git/**",

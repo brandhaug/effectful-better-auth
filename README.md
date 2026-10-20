@@ -339,6 +339,8 @@ See [SPEC.md](./SPEC.md) for the full design.
 
 Issues and pull requests are welcome at [brandhaug/effectful-better-auth](https://github.com/brandhaug/effectful-better-auth). Run the checks locally before submitting:
 
+Use Bun >= 1.4.3. `typecheck` runs Bun's built-in `bun check`; the build and declaration probes use `tsc` to emit files.
+
 ```bash
 bun run typecheck && bun run test
 ```

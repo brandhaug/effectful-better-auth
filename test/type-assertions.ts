@@ -3,7 +3,7 @@
 // `bun run typecheck` (root tsconfig includes test/); the export keeps
 // unused-variable lints quiet.
 /**
- * Type-level assertions, checked by `bun run typecheck` (tsc --noEmit).
+ * Type-level assertions, checked by `bun run typecheck` (bun check).
  * Ported from the validated prototype (prototype/typing-strategy branch).
  * Positive cases must compile; `@ts-expect-error` cases must stay errors.
  */
