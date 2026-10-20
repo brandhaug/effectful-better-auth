@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.6...effectful-better-auth-v1.0.7) (2026-10-20)
+
+
+### Miscellaneous
+
+* **deps:** group coupled catalog updates ([#87](https://github.com/brandhaug/effectful-better-auth/issues/87)) ([3046d14](https://github.com/brandhaug/effectful-better-auth/commit/3046d140e27f888523c19c2629dc73b9628a4610))
+
 ## [1.0.6](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.5...effectful-better-auth-v1.0.6) (2026-10-20)
 
 
