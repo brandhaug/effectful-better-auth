@@ -3,7 +3,9 @@
 	"defaultBranch": "master",
 	"maxOpenPrs": 20,
 	"concurrency": 10,
-	"packageManager": "bun",
+	"groups": [
+		{ "name": "all-patch-updates", "patterns": ["*"], "updateTypes": ["patch"] }
+	],
 	"ignore": [],
 	"minReleaseAgeDays": 3,
 	"autoMerge": { "enabled": true, "mergeMethod": "squash" }
