@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.8](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.7...effectful-better-auth-v1.0.8) (2026-10-22)
+
+
+### Miscellaneous
+
+* **deps:** bump better-auth from 1.7.10 to 1.7.11 ([#89](https://github.com/brandhaug/effectful-better-auth/issues/89)) ([4ef3f77](https://github.com/brandhaug/effectful-better-auth/commit/4ef3f7796f56a2cc3b1a38177a5c2b77477bc4f9))
+* **tooling:** upgrade Bun to 1.4.4 ([#91](https://github.com/brandhaug/effectful-better-auth/issues/91)) ([1378a4f](https://github.com/brandhaug/effectful-better-auth/commit/1378a4f7f21b1e786ddd8f7b7cfdb641a27af7d6))
+
 ## [1.0.7](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.6...effectful-better-auth-v1.0.7) (2026-10-20)
 
 
