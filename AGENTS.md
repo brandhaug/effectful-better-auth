@@ -23,7 +23,7 @@ Everything ships from `src/index.ts`, each documented with examples in the READM
 
 ## Tooling
 
-- Bun >= 1.4.3. Tests are `bun test` (not vitest); typecheck is `bun run typecheck`, which runs `bun check`. Run both before submitting. Builds and declaration probes use `tsc` to emit files.
+- Bun >= 1.4.4. Tests are `bun test` (not vitest); typecheck is `bun run typecheck`, which runs `bun check`. Run both before submitting. Builds and declaration probes use `tsc` to emit files.
 - Formatting is `oxfmt` (`bun run format`): tabs, 80 columns, no semicolons. Pre-commit hooks live in `.githooks` (set by the `prepare` script) and run `oxfmt` + `oxlint --type-aware --fix` through lint-staged.
 - Dependencies are pinned via catalogs in `package.json`; `.github/workflows/catalog-update.yml` bumps them automatically.
 - Peers: `effect ^4.0.0`, `better-auth ^1.6.0`. ESM-only, zero runtime deps.
