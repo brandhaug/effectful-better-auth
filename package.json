@@ -67,7 +67,7 @@
 	"catalog": {
 		"@types/node": "24",
 		"better-auth": "1.7.14",
-		"effect": "4.1.0",
+		"effect": "4.1.1",
 		"lint-staged": "17.6.0",
 		"oxfmt": "0.75.0",
 		"typescript": "7.0.2"
