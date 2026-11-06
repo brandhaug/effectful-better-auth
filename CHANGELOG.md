@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.11](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.10...effectful-better-auth-v1.0.11) (2026-11-06)
+
+
+### Miscellaneous
+
+* **deps:** bump oxfmt from 0.75.0 to 0.76.0 ([#105](https://github.com/brandhaug/effectful-better-auth/issues/105)) ([e5843bb](https://github.com/brandhaug/effectful-better-auth/commit/e5843bbc79f4d0d4cc2f273f28684e2ce8b23702))
+
 ## [1.0.10](https://github.com/brandhaug/effectful-better-auth/compare/effectful-better-auth-v1.0.9...effectful-better-auth-v1.0.10) (2026-11-04)
 
 
