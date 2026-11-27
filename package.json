@@ -1,6 +1,6 @@
 {
 	"name": "effectful-better-auth",
-	"version": "1.0.11",
+	"version": "1.0.12",
 	"description": "Effect v4 integration for Better Auth: plugin-aware service/Layer factory and an effectful auth.api proxy with tagged errors.",
 	"keywords": [
 		"auth",
@@ -72,7 +72,7 @@
 		"@types/node": "24",
 		"better-auth": "1.7.28",
 		"effect": "4.1.5",
-		"fallow": "3.48.0",
+		"fallow": "3.47.0",
 		"lint-staged": "17.6.2",
 		"oxfmt": "0.80.0",
 		"typescript": "7.0.2"
